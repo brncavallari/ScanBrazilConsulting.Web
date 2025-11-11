@@ -11,7 +11,7 @@ if (!tenantId || !clientId) {
 export const msalConfig: Configuration = {
     auth: {
         clientId: clientId!,
-        authority: `https://login.microsoftonline.com/${tenantId}`,
+        authority: `https://login.microsoftonline.com/${tenantId}/v2.0`,
         redirectUri: redirectUri,
     }
 };

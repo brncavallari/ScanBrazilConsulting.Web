@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { FaWindows } from 'react-icons/fa';
-import { GiShoppingCart } from "react-icons/gi";
 import { useNavigate } from 'react-router-dom';
 import { useMsal } from '@azure/msal-react';
 import { loginRequest } from '@configs/msalConfig';
@@ -41,7 +40,6 @@ const Login: React.FC = () => {
             });
 
             if (tokenResponse && tokenResponse.accessToken) {
-
                 createStorage(
                     tokenResponse,
                     activeAccount?.idTokenClaims?.groups as string[]
@@ -65,10 +63,9 @@ const Login: React.FC = () => {
                 <div className="mb-8 text-center">
                     <h1 className="text-3xl font-extrabold tracking-tight text-gray-100">
                         <span className="text-red-400">Scan Brazil</span>
-                        <span className="mx-2 font-light text-gray-500">|</span>
-                        Despesas
+                        <span className="mx-1 font-light text-gray-500">|</span>
+                        Consulting
                     </h1>
-                    <GiShoppingCart className="mx-auto mt-4 text-6xl text-gray-500" />
                 </div>
 
 

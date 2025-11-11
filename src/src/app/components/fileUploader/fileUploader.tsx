@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import type { ReceiptFile } from '@interfaces/IExpenses';
+import type { ReceiptFile } from '@interfaces/receiptFile';
 import { HiOutlineUpload, HiOutlineTrash } from 'react-icons/hi';
+import { PiMicrosoftExcelLogoDuotone } from "react-icons/pi";
 
 const FileUploader: React.FC<{
     files: ReceiptFile[];
@@ -39,7 +40,7 @@ const FileUploader: React.FC<{
             className="flex flex-col items-center p-3 border border-gray-700 rounded-lg bg-gray-700/50 relative group shadow-lg w-full"
         >
             <div className="h-20 w-auto flex items-center justify-center text-green-400 text-6xl">
-                📄
+                <PiMicrosoftExcelLogoDuotone/>
             </div>
 
             <p

@@ -4,7 +4,7 @@ import Login from '../src/app/pages/login/login';
 import Home from '../src/app/pages/home/home';
 import ProtectedRoute from '../src/app/components/route/protectedRoute'
 import WorkTimer from '@pages/workTimer';
-import RegisterWorkTimer from '@pages/workTimer/create';
+import CreateUserTimer from '@pages/workTimer/create';
 import ImportWorkTimer from '@pages/workTimer/import';
 
 const App: React.FC = () => {
@@ -15,8 +15,8 @@ const App: React.FC = () => {
                 <Route element={<ProtectedRoute> <Outlet /> </ProtectedRoute>}>
                     <Route path="/home" element={<Home />} />
                     <Route path="/worktimer" element={<WorkTimer />} />
-                    <Route path="/worktimer/register" element={<RegisterWorkTimer />} />
-                       <Route path="/worktimer/import" element={<ImportWorkTimer />} />
+                    <Route path="/worktimer/register" element={<CreateUserTimer />} />
+                    <Route path="/worktimer/import" element={<ImportWorkTimer />} />
                 </Route>
                 <Route path="*" element={<div className="min-h-screen bg-gray-900 text-white p-8">404: Página não encontrada</div>} />
             </Routes>

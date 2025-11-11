@@ -1,6 +1,6 @@
 import MonthYearPicker from "@components/monthYearPicker/monthYearPicker";
 import Navbar from "@components/navbar/navbar";
-import type { ReceiptFile } from "@interfaces/IExpenses";
+import type { ReceiptFile } from "@interfaces/receiptFile";
 import FileUploader from "@components/fileUploader/fileUploader";
 import { useState, type FormEvent } from "react";
 import React from "react";
@@ -36,8 +36,8 @@ const ImportWorkTimer: React.FC = () => {
         console.log({
             year: referenceMonth.split('-')[0],
             month: referenceMonth.split('-')[1],
-            file: selectedFile.name,
-            pureFiles
+            fileName: selectedFile.name,
+            file: pureFiles
         });
 
         toast.success(`Importação realizada com sucesso.`);
@@ -55,7 +55,6 @@ const ImportWorkTimer: React.FC = () => {
                     <h1 className="text-2xl font-semibold text-center mb-8 text-blue-400">Importar Planilha de Horas</h1>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Mês de Referência */}
                         <div>
                             <label className="block text-sm font-medium mb-2 text-gray-300" htmlFor="referenceMonth">
                                 Mês de Referência
@@ -67,7 +66,6 @@ const ImportWorkTimer: React.FC = () => {
                             />
                         </div>
 
-                        {/* Campo Upload de Arquivo (Usando o componente ajustado) */}
                         <div>
                             <FileUploader
                                 files={receiptFiles}
@@ -75,7 +73,6 @@ const ImportWorkTimer: React.FC = () => {
                             />
                         </div>
 
-                        {/* Botão de Importar */}
                         <button
                             type="submit"
                             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-blue-500/30 disabled:opacity-50"

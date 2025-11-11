@@ -114,8 +114,8 @@ const Navbar: React.FC = () => {
                     </div>
 
                     <div className="hidden md:flex items-center space-x-3">
-                        <span className="text-lg font-medium text-gray-100 truncate max-w-[150px]">
-                            {name}
+                        <span className="flex items-center text-white text-xl font-bold tracking-wider">
+                            {name} 
                         </span>
                         <button
                             onClick={handleLogout}

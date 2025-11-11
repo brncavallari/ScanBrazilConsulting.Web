@@ -11,12 +11,6 @@ export interface RefoundPayload {
     userName: string;
 }
 
-export interface ReceiptFile {
-    name: string | null | undefined;
-    file: File;
-    preview: string;
-}
-
 export interface Expense {
     id: number;
     type: string;
