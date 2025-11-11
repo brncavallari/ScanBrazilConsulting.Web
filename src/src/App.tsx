@@ -2,9 +2,10 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import Login from '../src/app/pages/login/login';
 import Home from '../src/app/pages/home/home';
-import Register from '../src/app/pages/register/register';
-import History from '../src/app/pages/history/history';
 import ProtectedRoute from '../src/app/components/route/protectedRoute'
+import WorkTimer from '@pages/workTimer';
+import RegisterWorkTimer from '@pages/workTimer/create';
+import ImportWorkTimer from '@pages/workTimer/import';
 
 const App: React.FC = () => {
     return (
@@ -13,9 +14,9 @@ const App: React.FC = () => {
                 <Route path="/" element={<Login />} />
                 <Route element={<ProtectedRoute> <Outlet /> </ProtectedRoute>}>
                     <Route path="/home" element={<Home />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/history" element={<History />} />
-                    <Route path="/configuration" />
+                    <Route path="/worktimer" element={<WorkTimer />} />
+                    <Route path="/worktimer/register" element={<RegisterWorkTimer />} />
+                       <Route path="/worktimer/import" element={<ImportWorkTimer />} />
                 </Route>
                 <Route path="*" element={<div className="min-h-screen bg-gray-900 text-white p-8">404: Página não encontrada</div>} />
             </Routes>

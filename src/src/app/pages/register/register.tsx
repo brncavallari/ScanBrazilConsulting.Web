@@ -3,7 +3,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { HiOutlineArrowLeft, HiOutlinePlus } from 'react-icons/hi';
 import Navbar from '@components/navbar/navbar';
 import { useNavigate } from 'react-router-dom';
-import FileUploader from './fileUploader/fileUploader';
+import FileUploader from '@components/fileUploader/fileUploader';
 import ProgressBar from './progressBar/progress'
 import { createExpenses } from '@services/expenseService';
 import type { RefoundPayload } from '@interfaces/IExpenses';
