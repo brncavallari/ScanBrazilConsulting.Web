@@ -7,7 +7,7 @@ import FileUploader from '@components/fileUploader/fileUploader';
 import ProgressBar from './progressBar/progress'
 import { createExpenses } from '@services/expenseService';
 import type { RefoundPayload } from '@interfaces/IExpenses';
-import type { ReceiptFile } from '@interfaces/IExpenses';
+import type { ReceiptFile } from '@interfaces/IReceiptFile';
 import { getUserName } from '@services/storageService';
 import type { Expense } from '@interfaces/IExpenses'
 

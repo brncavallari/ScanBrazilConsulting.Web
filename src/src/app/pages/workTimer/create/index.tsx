@@ -37,7 +37,7 @@ const CreateUserTimer: React.FC = () => {
     }
   };
 
-  const handleLogin = (e: FormEvent) => {
+  const handlerSubmit = (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -56,7 +56,7 @@ const CreateUserTimer: React.FC = () => {
     }
 
     setTimeout(() => {
-      console.log('Dados submetidos (handleLogin):', {
+      console.log('Dados submetidos (handlerSubmit):', {
         email: fullEmail,
         hours: hours,
       });
@@ -65,6 +65,7 @@ const CreateUserTimer: React.FC = () => {
         emailPrefix: '',
         hours: 0
       });
+      
       setIsLoading(false);
     }, 1500);
   };
@@ -80,7 +81,7 @@ const CreateUserTimer: React.FC = () => {
             Registro de Horas
           </h1>
 
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handlerSubmit} className="space-y-6">
             <div>
               <label htmlFor="emailPrefix" className="block text-sm font-semibold text-gray-400 mb-2">
                 Email do Usuário (Prefixo)

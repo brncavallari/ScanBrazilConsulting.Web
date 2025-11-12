@@ -1,16 +1,19 @@
 import MonthYearPicker from "@components/monthYearPicker/monthYearPicker";
 import Navbar from "@components/navbar/navbar";
-import type { ReceiptFile } from "@interfaces/receiptFile";
+import type { ReceiptFile } from "@interfaces/IReceiptFile";
 import FileUploader from "@components/fileUploader/fileUploader";
 import { useState, type FormEvent } from "react";
 import React from "react";
 import toast, { Toaster } from 'react-hot-toast';
+import type { UploadWorkTimer } from '@interfaces/IWorkTimer';
+import { uploadWorkTimerAsync } from '@services/workTimerService';
 
 const ImportWorkTimer: React.FC = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [referenceMonth, setReferenceMonth] = useState<string>('');
     const [receiptFiles, setReceiptFiles] = useState<ReceiptFile[]>([]);
-    
+    const [isLoading, setIsLoading] = useState(false);
+
     React.useEffect(() => {
         if (receiptFiles.length > 0) {
             setSelectedFile(receiptFiles[0].file);
@@ -18,31 +21,47 @@ const ImportWorkTimer: React.FC = () => {
             setSelectedFile(null);
         }
     }, [receiptFiles]);
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault();
 
-        if (!referenceMonth) {
-            toast.error('Por favor, selecione o Mês de Referência.');
-            return;
+    const handleSubmit = async (e: FormEvent) => {
+        try {
+            e.preventDefault();
+            setIsLoading(true);
+
+            if (!referenceMonth) {
+                toast.error('Por favor, selecione o Mês de Referência.');
+                setIsLoading(false);
+                return;
+            }
+
+            if (!selectedFile) {
+                toast.error('Por favor, selecione um Arquivo para importar.');
+                setIsLoading(false);
+                return;
+            }
+
+            const pureFiles: File[] = receiptFiles.map(f => f.file);
+
+            const uploadWorkTimerPayload: UploadWorkTimer = {
+                fileName: selectedFile.name,
+                year: referenceMonth.split('-')[0],
+                month: referenceMonth.split('-')[1],
+                file: pureFiles[0]
+            };
+
+            await uploadWorkTimerAsync(
+                uploadWorkTimerPayload
+            );
+
+            toast.success(`Importação realizada com sucesso.`);
+
+            setReferenceMonth('');
+            setReceiptFiles([]);
+            setIsLoading(false);
         }
-
-        if (!selectedFile) {
-            toast.error('Por favor, selecione um Arquivo para importar.');
-            return;
+        catch (err) {
+            toast.error(`Falha ao realizar a importação`);
+            setIsLoading(false);
         }
-
-        const pureFiles: File[] = receiptFiles.map(f => f.file);
-
-        console.log({
-            year: referenceMonth.split('-')[0],
-            month: referenceMonth.split('-')[1],
-            fileName: selectedFile.name,
-            file: pureFiles
-        });
-
-        toast.success(`Importação realizada com sucesso.`);
-        setReferenceMonth('');
-        setReceiptFiles([]);
     };
 
     return (
@@ -75,10 +94,26 @@ const ImportWorkTimer: React.FC = () => {
 
                         <button
                             type="submit"
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-blue-500/30 disabled:opacity-50"
-                            disabled={!selectedFile}
+                            className={`w-full flex justify-center items-center px-6 py-3 border border-transparent text-lg font-bold rounded-xl shadow-md transition duration-200 ease-in-out transform hover:scale-[1.01]
+                            ${isLoading
+                                    ? 'bg-blue-600/50 text-white/70 cursor-not-allowed'
+                                    : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg'
+                                }`}
+                            disabled={isLoading}
                         >
-                            Importar Dados
+                            {isLoading ? (
+                                <span className="flex items-center">
+                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Salvando...
+                                </span>
+                            ) : (
+                                <span className="flex items-center">
+                                    Importar Dados
+                                </span>
+                            )}
                         </button>
                     </form>
                 </div>

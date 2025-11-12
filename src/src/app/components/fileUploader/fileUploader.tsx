@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import type { ReceiptFile } from '@interfaces/receiptFile';
+import type { ReceiptFile } from '@interfaces/IReceiptFile';
 import { HiOutlineUpload, HiOutlineTrash } from 'react-icons/hi';
 import { PiMicrosoftExcelLogoDuotone } from "react-icons/pi";
 
