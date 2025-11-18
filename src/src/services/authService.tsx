@@ -45,3 +45,19 @@ export async function logout(instance: IPublicClientApplication) {
         console.error("Erro durante o logout:", err);
     }
 }
+
+export const getUserInfos = async (token: string): Promise<any> => {
+    try {
+        const response = await fetch("https://graph.microsoft.com/beta/me", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+        return data;
+    } catch (error: any) {
+        console.error("Erro ao buscar grupos:", error.response?.data || error);
+        throw error;
+    }
+};

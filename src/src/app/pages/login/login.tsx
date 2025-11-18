@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMsal } from '@azure/msal-react';
 import { loginRequest } from '@configs/msalConfig';
 import { createStorage, getToken, deleteStorage } from '@services/storageService';
+import { getUserInfos } from '@services/authService'
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
@@ -26,7 +27,7 @@ const Login: React.FC = () => {
 
                 if (!response.account) {
                     throw new Error("Nenhuma conta retornada após login.");
-                }
+                }   
 
                 instance.setActiveAccount(response.account);
                 activeAccount = response.account;
@@ -40,9 +41,15 @@ const Login: React.FC = () => {
             });
 
             if (tokenResponse && tokenResponse.accessToken) {
+
+                const userInfos = await getUserInfos(
+                    tokenResponse.accessToken
+                );
+
                 createStorage(
                     tokenResponse,
-                    activeAccount?.idTokenClaims?.groups as string[]
+                    activeAccount?.idTokenClaims?.groups as string[],
+                    userInfos.mail
                 );
 
                 navigate("/home");

@@ -12,14 +12,14 @@ export async function deleteStorage() {
     localStorage.removeItem(LocalStorageKeys.AUTH_GROUPS);
 }
 
-export async function createStorage(response: AuthenticationResult, groups: string[]) {
+export async function createStorage(response: AuthenticationResult, groups: string[], userName: string) {
     if (!response || !response.accessToken || !response.account) {
         return;
     }
 
     localStorage.setItem(LocalStorageKeys.AUTH_TOKEN,  response.accessToken);
     localStorage.setItem(LocalStorageKeys.AUTH_NAME, response.account.name ?? response.account.username ?? "");
-    localStorage.setItem(LocalStorageKeys.AUTH_USERNAME,  response.account.username ?? "");
+    localStorage.setItem(LocalStorageKeys.AUTH_USERNAME, userName ?? "");
     localStorage.setItem(LocalStorageKeys.AUTH_GROUPS, JSON.stringify(groups));
 }
 

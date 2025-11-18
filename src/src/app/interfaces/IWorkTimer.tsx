@@ -1,3 +1,5 @@
+import type { IRemark } from "./IUser";
+
 export interface UploadWorkTimer {
     fileName: string | null | undefined;
     file: File;
@@ -12,7 +14,12 @@ export interface ClonableIconCardProps {
     color: string;
 }
 
-export interface HoursBalance {
-    totalMinutes: number;
-    lastUpdated: string;
+export interface RemarksTableProps {
+  remarks: IRemark[];
 }
+
+export interface HoursBalance {
+    hour: number;
+    remark: IRemark[]
+}
+
