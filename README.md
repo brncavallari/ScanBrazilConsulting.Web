@@ -1,2 +1,2 @@
-# ScanDespesas.Web
-Sistema WEB para calculo de Despesas
+# Scan Brazil Consulting
+Sistema WEB Interno para Scan Brazil Consulting
