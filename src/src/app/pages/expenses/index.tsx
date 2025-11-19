@@ -3,13 +3,13 @@ import toast, { Toaster } from 'react-hot-toast';
 import { HiOutlineArrowLeft, HiOutlinePlus } from 'react-icons/hi';
 import Navbar from '@components/navbar/navbar';
 import { useNavigate } from 'react-router-dom';
-import FileUploader from '@components/fileUploader/fileUploader';
 import ProgressBar from './progressBar/progress'
 import { createExpenses } from '@services/expenseService';
 import type { RefoundPayload } from '@interfaces/IExpenses';
 import type { ReceiptFile } from '@interfaces/IReceiptFile';
 import { getUserName } from '@services/storageService';
 import type { Expense } from '@interfaces/IExpenses'
+import MultipleFileUploader from '@components/fileUploader/multipleFileUploader';
 
 const expenseOptions = [
     { value: 'fuel', label: 'Combustível' },
@@ -39,7 +39,7 @@ const formatCurrency = (rawValue: string): string => {
 };
 
 
-const Register: React.FC = () => {
+const Expenses: React.FC = () => {
 
     const [currentStep, setCurrentStep] = useState(1);
     const [selectedType, setSelectedType] = useState(expenseOptions[0].value);
@@ -90,12 +90,12 @@ const Register: React.FC = () => {
             return;
         }
 
-        if (selectedType === 'Outros' && !otherTypeValue.trim()) {
+        if (selectedType === 'others' && !otherTypeValue.trim()) {
             toast.error('O campo "Nome do Tipo" não pode ser vazio.');
             return;
         }
 
-        const finalType = selectedType === 'Outros' ? otherTypeValue.trim() : selectedType;
+        const finalType = selectedType === 'others' ? otherTypeValue.trim() : selectedType;
 
         const newExpense: Expense = {
             id: Date.now(),
@@ -126,8 +126,12 @@ const Register: React.FC = () => {
                 userName
             };
 
-            const pureFiles: File[] = receiptFiles.map(f => f.file);
-            await createExpenses(payload, pureFiles);
+            const files: File[] = receiptFiles.map(f => f.file);
+
+            await createExpenses(
+                payload,
+                files
+            );
 
             toast.success("Cadastro realizado com sucesso.");
             setTimeout(() => handleHome(), 2000);
@@ -193,13 +197,17 @@ const Register: React.FC = () => {
         (currentStep === 3 && hasAdvance && (!advanceValue || toNumber(advanceValue) === 0));
 
     return (
-        <div className="min-h-screen bg-gray-900">
+        <div className="min-h-screen bg-gray-900 bg-gradient-to-br from-gray-700 via-gray-900 to-black">
             <Toaster position="top-center" reverseOrder={false} />
             <Navbar />
 
             <main className="mx-auto max-w-7xl py-8 sm:px-6 lg:px-8">
                 <ProgressBar currentStep={currentStep} />
 
+                <div className="absolute inset-0 overflow-hidden relative z-10">
+                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-400/10 rounded-full blur-3xl"></div>
+                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl"></div>
+                </div>
                 <div className="bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700">
 
                     <h2 className="text-2xl font-bold text-white mb-10 text-center">
@@ -225,9 +233,9 @@ const Register: React.FC = () => {
                                     </select>
                                 </div>
 
-                                {selectedType === 'Outros' && (
+                                {selectedType === 'others' && (
                                     <div className="flex-1 max-w-xs">
-                                        <label htmlFor="other-type" className="block text-sm font-medium text-gray-400 mb-1">
+                                        <label htmlFor="other-type" className="relative block text-sm font-medium text-gray-400 mb-1">
                                             Tipo
                                         </label>
                                         <input
@@ -240,7 +248,7 @@ const Register: React.FC = () => {
                                     </div>
                                 )}
 
-                                <div className={`relative ${selectedType === 'Outros' ? 'max-w-[160px]' : 'flex-1 max-w-xs'}`}>
+                                <div className={`relative ${selectedType === 'others' ? 'max-w-[160px]' : 'flex-1 max-w-xs'}`}>
                                     <label htmlFor="expense-value" className="block text-sm font-medium text-gray-400 mb-1">Valor</label>
                                     <span className="absolute left-0 top-1/2 mt-0.5 ml-3 text-white pointer-events-none">R$</span>
                                     <input
@@ -310,7 +318,7 @@ const Register: React.FC = () => {
                     )}
 
                     {currentStep === 2 && (
-                        <FileUploader
+                        <MultipleFileUploader
                             files={receiptFiles}
                             setFiles={setReceiptFiles}
                         />
@@ -379,7 +387,7 @@ const Register: React.FC = () => {
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-green-400 font-medium text-right">{expense.value}</td>
                                             </tr>
                                         ))}
-                                        
+
                                         <tr className="bg-gray-700 font-bold">
                                             <td className="px-6 py-3 whitespace-nowrap text-md text-white">TOTAL</td>
                                             <td className="px-6 py-3 whitespace-nowrap text-xl text-green-300 text-right">R$ {totalFormatted}</td>
@@ -468,4 +476,4 @@ const Register: React.FC = () => {
     );
 };
 
-export default Register;
+export default Expenses;

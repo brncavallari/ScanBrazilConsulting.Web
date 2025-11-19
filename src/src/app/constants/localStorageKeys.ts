@@ -1,5 +1,6 @@
 const LocalStorageKeys = {
     AUTH_TOKEN: '@scanbrazil/default-token',
+    AUTH_USERNAME: '@scanbrazil/user-name',
     AUTH_NAME: '@scanbrazil/name',
     AUTH_GROUPS: "@scanbrazil/groups"
 };

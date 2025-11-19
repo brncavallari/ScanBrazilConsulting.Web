@@ -6,6 +6,9 @@ import { logout } from '@services/authService';
 import { BsClockHistory } from "react-icons/bs";
 import { IoCreateOutline } from "react-icons/io5";
 import { CiImport } from "react-icons/ci";
+import { useAuth } from '../../auth/useAuth';
+import { GiShoppingCart } from "react-icons/gi";
+import { GoPencil } from "react-icons/go";
 
 const NavLinks = [
     { name: 'Home', path: '/home', icon: HiOutlineHome },
@@ -14,6 +17,7 @@ const NavLinks = [
 const Navbar: React.FC = () => {
     const [openMenu, setOpenMenu] = useState<string | null>(null);
     const navigate = useNavigate();
+    const { isAdmin, isUser } = useAuth();
 
     const name = getName();
 
@@ -54,24 +58,35 @@ const Navbar: React.FC = () => {
                             ))}
 
                             <div className="relative">
-                                <div
-                                    onClick={() => navigate('/worktimer')}
-                                    className="flex items-center space-x-1 px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer"
-                                >
-                                    <BsClockHistory className="h-4 w-5 mr-1" />
-                                    <span>Horas</span>
-                                    <HiChevronDown
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setOpenMenu(openMenu === 'Horas' ? null : 'Horas');
-                                        }}
-                                        className={`h-5 w-5 transition-transform duration-200 ${openMenu === 'Horas' ? 'rotate-180' : ''
-                                            }`}
-                                    />
-                                </div>
 
-                                {/* CRIAR REGRA PARA ADMIN - APENAS ADMIN PODE CADASTRAR */}
-                                {openMenu === 'Horas' && (
+                                {/* Menu Horas */}
+                                {isAdmin ? (
+                                    <div
+                                        onClick={() => navigate('/worktimer')}
+                                        className="flex items-center space-x-1 px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer"
+                                    >
+                                        <BsClockHistory className="h-4 w-5 mr-1" />
+                                        <span>Horas</span>
+                                        <HiChevronDown
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setOpenMenu(openMenu === 'Horas' ? null : 'Horas');
+                                            }}
+                                            className={`h-5 w-5 transition-transform duration-200 ${openMenu === 'Horas' ? 'rotate-180' : ''
+                                                }`}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div
+                                        onClick={() => navigate('/worktimer')}
+                                        className="flex items-center space-x-1 px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer"
+                                    >
+                                        <BsClockHistory className="h-4 w-5 mr-1" />
+                                        <span>Horas</span>
+                                    </div>
+                                )}
+
+                                {isAdmin && openMenu === 'Horas' && (
                                     <div className="absolute left-0 mt-3 w-40 bg-gray-700 rounded-md shadow-lg z-50">
                                         <Link
                                             to="/worktimer/register"
@@ -86,21 +101,60 @@ const Navbar: React.FC = () => {
                                             className="flex items-center gap-2 px-4 py-2 text-base text-white hover:bg-gray-600 rounded-md"
                                             onClick={() => setOpenMenu(null)}
                                         >
-                                            <CiImport  className="h-5 w-5 mr-1" />
+                                            <CiImport className="h-5 w-5 mr-1" />
                                             Importar
                                         </Link>
                                     </div>
-
                                 )}
                             </div>
 
-                                                        
+                            {/* Menu Despesas */}
+                            <div className="relative">
+                                {isAdmin ? (
+                                    <div
+                                        onClick={() => navigate('/expenses')}
+                                        className="flex items-center space-x-1 px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer"
+                                    >
+                                        <GiShoppingCart className="h-5 w-5 mr-1" />
+                                        <span>Despesas</span>
+                                        <HiChevronDown
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setOpenMenu(openMenu === 'Despesas' ? null : 'Despesas');
+                                            }}
+                                            className={`h-5 w-5 transition-transform duration-200 ${openMenu === 'Despesas' ? 'rotate-180' : ''
+                                                }`}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div
+                                        onClick={() => navigate('/expenses')}
+                                        className="flex items-center space-x-1 px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer"
+                                    >
+                                        <GiShoppingCart className="h-5 w-5 mr-1" />
+                                        <span>Despesas</span>
+                                    </div>
+                                )}
+                             
+                                {isAdmin && openMenu === 'Despesas' && (
+                                    <div className="absolute left-0 mt-3 w-40 bg-gray-700 rounded-md shadow-lg z-50">
+                                        <Link
+                                            to="/expenses/register"
+                                            className="flex items-center gap-2 px-4 py-2 text-base text-white hover:bg-gray-600 rounded-md"
+                                            onClick={() => setOpenMenu(null)}
+                                        >
+                                            <GoPencil className="h-5 w-5 mr-1" />
+                                            Aprovações
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
                     <div className="hidden md:flex items-center space-x-3">
                         <span className="flex items-center text-white text-xl font-bold tracking-wider">
-                            {name} 
+                            {name}
                         </span>
                         <button
                             onClick={handleLogout}

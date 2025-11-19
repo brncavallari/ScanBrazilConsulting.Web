@@ -18,7 +18,6 @@ const Login: React.FC = () => {
 
     const handleLogin = async () => {
         try {
-
             let activeAccount = msalInstance.getActiveAccount();
 
             if (!activeAccount) {
@@ -40,6 +39,7 @@ const Login: React.FC = () => {
             });
 
             if (tokenResponse && tokenResponse.accessToken) {
+                
                 createStorage(
                     tokenResponse,
                     activeAccount?.idTokenClaims?.groups as string[]
@@ -67,7 +67,7 @@ const Login: React.FC = () => {
 
             <div className="relative w-full max-w-md">
                 <div className="relative rounded-3xl bg-gray-800/80 backdrop-blur-xl border border-gray-700/50 shadow-2xl overflow-hidden">
-                    <div className="bg-gradient-to-r from-red-200 via-red-500 to-red-600 p-8 text-center">
+                    <div className="bg-gradient-to-r from-red-300 via-red-800 to-red-700 p-8 text-center">
 
                         <div className="flex items-center justify-center space-x-3 mb-2">
                             <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
@@ -78,7 +78,7 @@ const Login: React.FC = () => {
                                 />
                             </div>
                             <h1 className="text-3xl font-bold text-white tracking-tight">
-                                Scan Brazil
+                                Scan Brazil Consulting
                             </h1>
                         </div>
 
@@ -87,7 +87,7 @@ const Login: React.FC = () => {
 
                     <div className="p-8">
                         <div className="text-center mb-8">
-                            <h2 className="text-2xl font-bold text-white mb-2">
+                            <h2 className="text-3xl font-bold text-white mb-2">
                                 Bem-vindo
                             </h2>
                             <p className="text-gray-400 text-sm leading-relaxed">
@@ -95,7 +95,6 @@ const Login: React.FC = () => {
                             </p>
                         </div>
 
-                        {/* Botão de Login */}
                         <button
                             onClick={handleLogin}
                             className="group relative w-full bg-[#0078D4] hover:bg-[#106EBE] rounded-xl py-4 px-6 text-white font-semibold shadow-lg transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-[#0078D4]/30 border border-[#0078D4]/20"
@@ -105,11 +104,9 @@ const Login: React.FC = () => {
                                 <span className="text-base">Entrar com Microsoft</span>
                             </div>
 
-                            {/* Efeito de brilho no hover */}
                             <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                         </button>
 
-                        {/* Informações de Acesso */}
                         <div className="mt-8 p-4 bg-gray-700/50 rounded-xl border border-gray-600/30">
                             <div className="flex items-start space-x-3">
                                 <div className="flex-shrink-0 w-5 h-5 mt-0.5">
@@ -127,20 +124,10 @@ const Login: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Footer */}
                     <div className="px-8 py-4 bg-gray-900/50 border-t border-gray-700/30">
                         <p className="text-center text-xs text-gray-500">
                             Sistema interno • Versão 1.0 • {new Date().getFullYear()}
                         </p>
-                    </div>
-                </div>
-
-                {/* Decoração adicional */}
-                <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
-                    <div className="flex space-x-2">
-                        {[1, 2, 3].map((item) => (
-                            <div key={item} className="w-2 h-2 bg-gray-600 rounded-full opacity-50"></div>
-                        ))}
                     </div>
                 </div>
             </div>

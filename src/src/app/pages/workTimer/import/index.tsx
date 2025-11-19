@@ -97,6 +97,7 @@ const ImportWorkTimer: React.FC = () => {
     };
 
     const openConfirmation = (id: string) => {
+        console.log(id)
         setFileIdToDelete(id);
         setModalConfirmationOpen(true);
     };
@@ -121,16 +122,15 @@ const ImportWorkTimer: React.FC = () => {
             <Toaster position="top-center" reverseOrder={false} />
             <Navbar />
 
-            <main className="flex flex-1 justify-center items-start pt-12 p-4 lg:p-6">
+            <main className="flex flex-1 justify-center items-start pt-12 p-4 lg:p-6 ">
                 <div className="w-full max-w-6xl bg-gray-800 shadow-2xl rounded-2xl p-6 md:p-8 text-white border border-gray-700">
                     <div className="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-
-                        <h1 className="text-2xl font-extrabold text-blue-400 text-center mb-6 border-b border-gray-700 pb-3">
+                        <h1 className="text-2xl font-extrabold text-blue-400">
                             Histórico de Planilhas Importadas
                         </h1>
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200 transform hover:scale-[1.01]"
+                            className="flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200 transform hover:scale-[1.01] relative z-10"
                         >
                             <GoPlus className="h-5 w-5 mr-2" />
                             Importar
@@ -177,10 +177,11 @@ const ImportWorkTimer: React.FC = () => {
                                                 </td>
                                                 <td className="px-6 py-4 text-center text-red-400 hidden sm:table-cell">
                                                     <button
-                                                        onClick={() => openConfirmation(file.id)}>
-                                                        <FaTrashAlt className="h-5 w-5 mr-2" />
+                                                        onClick={() => openConfirmation(file.id)}
+                                                        className="relative z-10 hover:text-red-300 transition-colors p-1 rounded hover:bg-red-500/10"
+                                                    >
+                                                        <FaTrashAlt className="h-5 w-5" />
                                                     </button>
-
                                                 </td>
                                             </tr>
                                         ))
@@ -206,7 +207,7 @@ const ImportWorkTimer: React.FC = () => {
                                 <button
                                     onClick={() => handlePageChange(currentPage - 1)}
                                     disabled={currentPage === 1}
-                                    className="p-2 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-700 disabled:opacity-50 transition"
+                                    className="p-2 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50 transition relative z-10"
                                 >
                                     <FaChevronLeft />
                                 </button>
@@ -216,7 +217,7 @@ const ImportWorkTimer: React.FC = () => {
                                 <button
                                     onClick={() => handlePageChange(currentPage + 1)}
                                     disabled={currentPage === totalPages}
-                                    className="p-2 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-700 disabled:opacity-50 transition"
+                                    className="p-2 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50 transition relative z-10"
                                 >
                                     <FaChevronRight />
                                 </button>

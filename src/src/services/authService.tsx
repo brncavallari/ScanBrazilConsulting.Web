@@ -1,7 +1,12 @@
 import axios from "axios";
-import {  loginRequest } from "@configs/msalConfig";
+import { loginRequest } from "@configs/msalConfig";
 import { deleteStorage } from '@services/storageService';
 import { msalInstance } from '../app/configs/msalInstance';
+
+export const ROLES = {
+  USER: '8c2c40c4-f02c-4bff-a557-62da28d3fa96',
+  ADMIN: 'edb2a7f5-0499-42bd-98d5-e39059766bfc'
+} as const;
 
 export const signIn = async () => {
     try {
@@ -58,4 +63,16 @@ export const getUserInfos = async (token: string): Promise<any> => {
         console.error("Erro ao buscar grupos:", error.response?.data || error);
         throw error;
     }
+};
+
+export const hasRole = (userRoles: string[], requiredRole: string): boolean => {
+    return userRoles.includes(requiredRole);
+};
+
+export const isAdmin = (userRoles: string[]): boolean => {
+    return hasRole(userRoles, ROLES.ADMIN);
+};
+
+export const isUser = (userRoles: string[]): boolean => {
+    return hasRole(userRoles, ROLES.USER);
 };
