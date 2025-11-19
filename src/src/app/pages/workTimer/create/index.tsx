@@ -32,7 +32,7 @@ const CreateUserTimer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [searchTerm, setSearchTerm] = useState(''); // Estado para o termo de busca
-  
+
   const ITEMS_PER_PAGE = 5;
 
   // Filtra os usuários pelo nome baseado no searchTerm
@@ -65,7 +65,7 @@ const CreateUserTimer: React.FC = () => {
       setCurrentPage(newPage);
     }
   };
-  
+
   const getHoursColor = (hours: number) => {
     if (hours > 0) return 'text-green-400 font-semibold text-center';
     if (hours < 0) return 'text-red-400 font-semibold text-center';
@@ -88,7 +88,12 @@ const CreateUserTimer: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-gray-900 flex flex-col font-sans bg-gradient-to-br from-gray-700 via-gray-900 to-black">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl"></div>
+      </div>
+
       <style>
         {`
           @keyframes slideInUp {

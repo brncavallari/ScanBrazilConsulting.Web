@@ -5,13 +5,13 @@ const RemarksTable: React.FC<RemarksTableProps> = ({ remarks }) => {
   if (remarks.length === 0) {
     return (
       <div className="text-center p-6 bg-gray-800 rounded-lg shadow-xl">
-        <p className="text-gray-400">Nenhuma observação registrada.</p>
+        <p className="text-gray-300 ">Nenhuma observação registrada.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-700/50 w-full overflow-hidden">
+    <div className="bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-700/50 w-full overflow-hidden ">
       <table className="min-w-full divide-y divide-gray-700">
         <thead className="bg-gray-700">
           <tr>

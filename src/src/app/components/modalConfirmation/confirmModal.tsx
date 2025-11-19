@@ -1,5 +1,6 @@
 import type { ConfirmModalProps } from "@interfaces/IModalConfirmation";
 import { IoMdClose } from "react-icons/io";
+import { RiErrorWarningFill } from "react-icons/ri";
 
 export default function ConfirmModal({
   open,
@@ -12,36 +13,40 @@ export default function ConfirmModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-gray-900 bg-opacity-80 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
       onClick={onCancel}
     >
       <div
-        className="bg-gray-800 rounded-xl shadow-2xl p-6 w-full max-w-md relative border border-gray-700 animate-slide-in-up"
+        className="bg-gray-900 rounded-2xl shadow-2xl p-8 w-full max-w-md relative border border-gray-700 animate-scale-in"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center border-b border-gray-700 pb-6 mb-6">
-          <h2 className=" font-semibold text-white">{title}</h2>
+        <button
+          onClick={onCancel}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-800 transition-all duration-200"
+        >
+          <IoMdClose size={20} />
+        </button>
 
-          <button
-            onClick={onCancel}
-            className="text-gray-400 hover:text-white p-1 rounded-full transition"
-          >
-            <IoMdClose size={20} />
-          </button>
+        <div className="text-center">
+          <h2 className="text-xl font-bold text-white mb-3">
+            {title}
+          </h2>
+          
+          <p className="text-gray-300 mb-8 leading-relaxed">
+            {message}
+          </p>
         </div>
-
-        <p className="text-gray-300 mb-6 text-sm">{message}</p>
-
-        <div className="flex justify-end gap-3">
+        
+        <div className="flex gap-3">
           <button
-            className="px-4 py-2 rounded-lg bg-gray-700 text-gray-200 hover:bg-gray-600 transition"
+            className="flex-1 px-4 py-3 rounded-xl bg-gray-700 text-gray-100 hover:bg-gray-600 transition-all duration-200 font-medium hover:scale-105 active:scale-95"
             onClick={onCancel}
           >
             Cancelar
           </button>
 
           <button
-            className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
+            className="flex-1 px-4 py-3 rounded-xl bg-red-500 text-white hover:bg-red-700 transition-all duration-200 font-medium hover:scale-105 active:scale-95 shadow-lg shadow-red-600/20"
             onClick={onConfirm}
           >
             Confirmar

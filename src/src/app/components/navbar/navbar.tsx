@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { HiOutlineLogout, HiOutlineHome, HiChevronDown } from 'react-icons/hi';
 import { Link, useNavigate } from 'react-router-dom';
-import { useMsal } from '@azure/msal-react';
 import { getName } from '@services/storageService';
 import { logout } from '@services/authService';
 import { BsClockHistory } from "react-icons/bs";
@@ -14,14 +13,13 @@ const NavLinks = [
 
 const Navbar: React.FC = () => {
     const [openMenu, setOpenMenu] = useState<string | null>(null);
-    const { instance } = useMsal();
     const navigate = useNavigate();
 
     const name = getName();
 
     const handleLogout = async () => {
         try {
-            logout(instance);
+            logout();
             navigate('/');
         } catch (e) {
             console.error("Erro durante o logout:", e);

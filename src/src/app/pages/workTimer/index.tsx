@@ -41,10 +41,15 @@ const WorkTimer: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-gray-900 flex flex-col font-sans bg-gradient-to-br from-gray-700 via-gray-900 to-black">
       <Navbar />
 
       <main className="flex flex-1 justify-center p-6 sm:p-10">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-400/10 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl"></div>
+        </div>
+
         <div className="w-full max-w-4xl space-y-8">
           <MainBalanceCard
             title="Total Disponível"
@@ -68,13 +73,13 @@ const MainBalanceCard: React.FC<ClonableIconCardProps> = ({
 
   return (
     <div
-      className={`p-8 rounded-2xl bg-gray-800 shadow-2xl border ${color.replace(
+      className={`p-8 rounded-2xl bg-gray-800 shadow-5xl border border-gray-500 ${color.replace(
         "text-",
         "border-"
-      )} transition hover:bg-gray-700/50 w-full`}
+      )} transition hover:bg-gray-500/50 w-full`}
     >
       <div className="flex justify-center items-center mb-4">
-        <h3 className="text-2xl font-extrabold text-blue-400 text-center mb-6 border-b border-gray-700 pb-3">
+        <h3 className="text-2xl font-extrabold text-blue-400 text-center mb-6 border-b border-gray-500 pb-3">
           {title}
         </h3>
       </div>

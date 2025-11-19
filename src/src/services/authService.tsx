@@ -1,9 +1,7 @@
-import { PublicClientApplication, type IPublicClientApplication } from "@azure/msal-browser";
 import axios from "axios";
-import { msalConfig, loginRequest } from "@configs/msalConfig";
+import {  loginRequest } from "@configs/msalConfig";
 import { deleteStorage } from '@services/storageService';
-
-export const msalInstance = new PublicClientApplication(msalConfig);
+import { msalInstance } from '../app/configs/msalInstance';
 
 export const signIn = async () => {
     try {
@@ -34,11 +32,11 @@ export const getUserGroups = async (token: string) => {
     }
 };
 
-export async function logout(instance: IPublicClientApplication) {
+export async function logout() {
     try {
         deleteStorage();
 
-        await instance.logoutPopup({
+        await msalInstance.logoutPopup({
             postLogoutRedirectUri: "/",
         });
     } catch (err) {

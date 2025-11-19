@@ -102,7 +102,11 @@ const ImportWorkTimer: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 flex flex-col font-sans">
+        <div className="min-h-screen bg-gray-900 flex flex-col font-sans bg-gradient-to-br from-gray-700 via-gray-900 to-black">
+            <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-500/10 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl"></div>
+            </div>
             <style>
                 {`
                     @keyframes slideInUp {
@@ -222,8 +226,6 @@ const ImportWorkTimer: React.FC = () => {
 
                     <ConfirmModal
                         open={isModalConfirmationOpen}
-                        title="Tem certeza que deseja remover esta importação?"
-                        message=""
                         onConfirm={handlerDelete}
                         onCancel={() => setModalConfirmationOpen(false)}
                     />

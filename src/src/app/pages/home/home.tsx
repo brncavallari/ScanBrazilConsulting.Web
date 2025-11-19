@@ -13,7 +13,7 @@ const CAROUSEL_IMAGES = [
 const AUTOPLAY_INTERVAL = 3000;
 
 const Home: React.FC = () => {
-    const [index, setIndex] = useState(1); // começa no primeiro slide real
+    const [index, setIndex] = useState(1);
     const [transitionEnabled, setTransitionEnabled] = useState(true);
 
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -83,8 +83,13 @@ const Home: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 flex flex-col font-sans">
+        <div className="min-h-screen bg-gray-900 flex flex-col font-sans bg-gradient-to-br from-gray-700 via-gray-900 to-black">
             <Navbar />
+
+            <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-500/10 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl"></div>
+            </div>
 
             <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 w-full">
                 <div className="bg-gray-800 rounded-xl shadow-2xl p-8 border border-gray-700">
@@ -143,12 +148,11 @@ const Home: React.FC = () => {
                                 <button
                                     key={i}
                                     onClick={() => goToSlide(i)}
-                                    className={`w-3 h-3 rounded-full transition ${
-                                        i === (index - 1 + CAROUSEL_IMAGES.length) %
-                                            CAROUSEL_IMAGES.length
-                                            ? "bg-white scale-110"
-                                            : "bg-gray-400 opacity-60"
-                                    }`}
+                                    className={`w-3 h-3 rounded-full transition ${i === (index - 1 + CAROUSEL_IMAGES.length) %
+                                        CAROUSEL_IMAGES.length
+                                        ? "bg-white scale-110"
+                                        : "bg-gray-400 opacity-60"
+                                        }`}
                                 />
                             ))}
                         </div>
