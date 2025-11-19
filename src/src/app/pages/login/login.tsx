@@ -18,6 +18,7 @@ const Login: React.FC = () => {
 
     const handleLogin = async () => {
         try {
+
             let activeAccount = msalInstance.getActiveAccount();
 
             if (!activeAccount) {

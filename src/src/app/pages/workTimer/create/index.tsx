@@ -7,13 +7,12 @@ import CreateUserModal from './modal/createModal';
 import { getUserTimersAsync } from '@services/userTimerService';
 import { FaChevronLeft } from "react-icons/fa6";
 import { FaChevronRight } from "react-icons/fa6";
-import { FaSearch } from "react-icons/fa"; // Importando ícone de busca
+import { FaSearch } from "react-icons/fa";
 
 const fetchUsers = async (setIsLoadingTable: (loading: boolean) => void): Promise<IUser[]> => {
   try {
     setIsLoadingTable(true);
     const response = await getUserTimersAsync();
-    console.log();
     return response;
   } catch (error) {
     console.error("Erro ao carregar histórico via API GET:", error);
@@ -31,7 +30,7 @@ const CreateUserTimer: React.FC = () => {
   const [isLoadingTable, setIsLoadingTable] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [searchTerm, setSearchTerm] = useState(''); // Estado para o termo de busca
+  const [searchTerm, setSearchTerm] = useState('');
 
   const ITEMS_PER_PAGE = 5;
 
@@ -40,11 +39,18 @@ const CreateUserTimer: React.FC = () => {
     user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Atualiza a paginação para usar os usuários filtrados
+  const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedFiles = filteredUsers.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    } else if (currentPage < 1 && filteredUsers.length > 0) {
+      setCurrentPage(1);
+    }
+  }, [currentPage, totalPages, filteredUsers.length]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,16 +61,15 @@ const CreateUserTimer: React.FC = () => {
     fetchData();
   }, [refreshTrigger]);
 
-  // Reseta para a página 1 quando o termo de busca muda
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = useCallback((newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
-  };
+  }, [totalPages]);
 
   const getHoursColor = (hours: number) => {
     if (hours > 0) return 'text-green-400 font-semibold text-center';
@@ -209,10 +214,11 @@ const CreateUserTimer: React.FC = () => {
                 {searchTerm && ` (Filtrado de ${users.length} total)`}
               </p>
               <div className="flex items-center space-x-2">
+
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="p-2 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-700 disabled:opacity-50 transition"
+                  className="p-2 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition relative z-10"
                 >
                   <FaChevronLeft />
                 </button>
@@ -221,11 +227,12 @@ const CreateUserTimer: React.FC = () => {
                 </span>
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className="p-2 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-700 disabled:opacity-50 transition"
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  className="p-2 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition relative z-10"
                 >
                   <FaChevronRight />
                 </button>
+
               </div>
             </div>
           )}

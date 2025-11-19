@@ -70,6 +70,7 @@ const Navbar: React.FC = () => {
                                     />
                                 </div>
 
+                                {/* CRIAR REGRA PARA ADMIN - APENAS ADMIN PODE CADASTRAR */}
                                 {openMenu === 'Horas' && (
                                     <div className="absolute left-0 mt-3 w-40 bg-gray-700 rounded-md shadow-lg z-50">
                                         <Link
@@ -93,18 +94,7 @@ const Navbar: React.FC = () => {
                                 )}
                             </div>
 
-                            {/* CRIAR REGRA PARA ADMIN - APENAS ADMIN PODE CADASTRAR */}
-
-                            {/* <div className="relative">
-                                <div
-                                    onClick={() => navigate('/worktimer')}
-                                    className="flex items-center space-x-1 px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer"
-                                >
-                                    <TbClockHour5 className="h-5 w-5 mr-1" />
-                                    <span>Horas</span>
-                                    
-                                </div>
-                            </div> */}
+                                                        
                         </div>
                     </div>
 
