@@ -7,7 +7,6 @@ export interface UploadWorkTimer {
     month: string
 }
 
-
 export interface ClonableIconCardProps {
     title: string;
     value: number;
@@ -23,3 +22,10 @@ export interface HoursBalance {
     remark: IRemark[]
 }
 
+export interface ImportedFile {
+    id: string;
+    fileName: string;
+    createdAt: number;
+    year: string;
+    month: string;
+}

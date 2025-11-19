@@ -53,3 +53,25 @@ export async function getWorkTimerImportedAsync() {
         throw new Error("Falha ao consultar Informações de Usuario.");
     }
 }
+
+
+export async function removeWorkTimerImported(id:string) {
+    const accessToken = getToken();
+
+    try {
+        const response = await axios.delete(`${API_URL}/api/v1/WorkTimerImported/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
+
+        return response.data;
+
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+            throw new Error("Não autorizado. Access Token inválido ou expirado. Requer novo login.");
+        }
+
+        throw new Error("Falha ao consultar Informações de Usuario.");
+    }
+}

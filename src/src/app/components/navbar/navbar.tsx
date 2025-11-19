@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMsal } from '@azure/msal-react';
 import { getName } from '@services/storageService';
 import { logout } from '@services/authService';
-import { TbClockHour5 } from "react-icons/tb";
+import { BsClockHistory } from "react-icons/bs";
 import { IoCreateOutline } from "react-icons/io5";
 import { CiImport } from "react-icons/ci";
 
@@ -32,8 +32,6 @@ const Navbar: React.FC = () => {
         <nav className="sticky top-0 z-10 bg-gray-800 shadow-lg">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
-
-                    {/* Logo / Título */}
                     <div className="flex items-center">
                         <Link to="/home" className="flex items-center text-white text-xl font-bold tracking-wider">
                             <h1 className="text-1xl font-extrabold tracking-tight text-gray-100">
@@ -44,7 +42,6 @@ const Navbar: React.FC = () => {
                         </Link>
                     </div>
 
-                    {/* Menu Desktop */}
                     <div className="hidden md:flex flex-grow justify-center">
                         <div className="flex items-center space-x-4">
                             {NavLinks.map((item) => (
@@ -63,7 +60,7 @@ const Navbar: React.FC = () => {
                                     onClick={() => navigate('/worktimer')}
                                     className="flex items-center space-x-1 px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer"
                                 >
-                                    <TbClockHour5 className="h-5 w-5 mr-1" />
+                                    <BsClockHistory className="h-4 w-5 mr-1" />
                                     <span>Horas</span>
                                     <HiChevronDown
                                         onClick={(e) => {
@@ -82,7 +79,7 @@ const Navbar: React.FC = () => {
                                             className="flex items-center gap-2 px-4 py-2 text-base text-white hover:bg-gray-600 rounded-md"
                                             onClick={() => setOpenMenu(null)}
                                         >
-                                            <IoCreateOutline className="h-4 w-4" />
+                                            <IoCreateOutline className="h-5 w-5 mr-1" />
                                             Cadastro
                                         </Link>
                                         <Link
@@ -90,7 +87,7 @@ const Navbar: React.FC = () => {
                                             className="flex items-center gap-2 px-4 py-2 text-base text-white hover:bg-gray-600 rounded-md"
                                             onClick={() => setOpenMenu(null)}
                                         >
-                                            <CiImport  className="h-4 w-4" />
+                                            <CiImport  className="h-5 w-5 mr-1" />
                                             Importar
                                         </Link>
                                     </div>

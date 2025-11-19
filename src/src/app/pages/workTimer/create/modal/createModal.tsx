@@ -1,11 +1,11 @@
 import React, { useState, type FormEvent } from 'react';
 import { IoMdClose } from "react-icons/io";
-import { CiClock1 } from "react-icons/ci";
+import { BsClockHistory } from "react-icons/bs";
 import { IoSaveOutline } from "react-icons/io5";
 import toast from 'react-hot-toast';
 import type { IUserData, IUser } from '@interfaces/IUser';
 import { updateUserTimerAsync } from '@services/userTimerService';
-
+import { getName } from '@services/storageService';
 
 const CreateUserModal: React.FC<{
   user: IUser;
@@ -13,20 +13,30 @@ const CreateUserModal: React.FC<{
   onSuccess: () => void;
 }> = ({ user, onClose, onSuccess }) => {
 
-  const [formData, setFormData] = useState<IUserData>({ hour: 0, remark: '', email: '' });
+  const [formData, setFormData] = useState<IUserData>({ hour: "", remark: '', email: '', userName: '' });
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
 
-    if (name === 'hour') {
-      const numberValue = parseFloat(value);
-      setFormData((prev) => ({
-        ...prev,
-        hour: value === '' || value === '-' ? value as any : isNaN(numberValue) ? 0 : numberValue,
-      }));
+    if (name === "hour") {
+      let raw = value;
+      let normalized = raw.replace(",", ".");
+
+      if (raw === "" || raw === "-") {
+        setFormData(prev => ({ ...prev, hour: raw }));
+        return;
+      }
+
+      const regex = /^-?\d+(\.\d*)?$/;
+
+      if (!regex.test(normalized)) {
+        return;
+      }
+
+      setFormData(prev => ({ ...prev, hour: raw }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
@@ -57,27 +67,26 @@ const CreateUserModal: React.FC<{
       }
 
       const userData: IUserData = {
-        hour: hoursValue,
+        hour: hoursValue.toString(),
         remark: formData.remark.trim(),
         email: user.email,
+        userName: getName()
       }
 
       await updateUserTimerAsync(
         userData
-      )
+      );
 
-      toast.success("Horas cadastradas com sucesso.");
+      toast.success("Horas cadastradas com Sucesso.");
     }
     catch (err) {
-       console.log(err);
+      console.log(err);
     }
     finally {
       setIsLoading(false);
       onSuccess()
     }
   };
-
-  const formattedHours = typeof formData.hour === 'string' ? formData.hour : formData.hour.toString();
 
   return (
     <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 transition-opacity duration-300">
@@ -100,15 +109,15 @@ const CreateUserModal: React.FC<{
                 name="hour"
                 type="text" // Usar 'text' para permitir o sinal de '-' na digitação inicial
                 step="0.01"
-                placeholder="Insira o valor (positivo ou negativo)"
+                placeholder="Insira o valor"
                 required
-                value={formattedHours}
+                value={formData.hour}
                 onChange={handleChange}
                 className="block w-full pl-3 pr-10 py-3 border border-gray-700 bg-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 text-base placeholder-gray-500 appearance-none"
                 disabled={isLoading}
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <CiClock1 className="w-5 h-5 text-gray-500" />
+                <BsClockHistory className="w-5 h-5 text-gray-500" />
               </div>
             </div>
             <p className="mt-1 text-xs text-gray-500">
@@ -125,7 +134,7 @@ const CreateUserModal: React.FC<{
               id="remark"
               name="remark"
               rows={3}
-              placeholder="Ex: Banco de horas feriadO..."
+              placeholder="Ex: Banco de horas..."
               required
               value={formData.remark}
               onChange={handleChange}

@@ -1,19 +1,14 @@
-import React, { useState, useEffect, useCallback, type FormEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import Navbar from '@components/navbar/navbar';
 import ImportModal from '@pages/workTimer/import/modal/importModal'
 import { FaChevronLeft } from "react-icons/fa6";
 import { FaChevronRight } from "react-icons/fa6";
 import { GoPlus } from "react-icons/go";
-import { getWorkTimerImportedAsync } from '@services/workTimerService'
-
-interface ImportedFile {
-    id: string;
-    fileName: string;
-    createdAt: number;
-    year: string;
-    month: string;
-}
+import { getWorkTimerImportedAsync, removeWorkTimerImported } from '@services/workTimerService'
+import { FaTrashAlt } from "react-icons/fa";
+import type { ImportedFile } from '@interfaces/IWorkTimer';
+import ConfirmModal from '../../../components/modalConfirmation/confirmModal';
 
 const fetchWorkTimerImported = async (setIsHistoryLoading: (loading: boolean) => void): Promise<ImportedFile[]> => {
     try {
@@ -41,11 +36,13 @@ const fetchWorkTimerImported = async (setIsHistoryLoading: (loading: boolean) =>
 
 const ImportWorkTimer: React.FC = () => {
     const [importedFiles, setImportedFiles] = useState<ImportedFile[]>([]);
+    const [fileIdToDelete, setFileIdToDelete] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 5;
     const [isHistoryLoading, setIsHistoryLoading] = useState(true);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalConfirmationOpen, setModalConfirmationOpen] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -82,6 +79,27 @@ const ImportWorkTimer: React.FC = () => {
         setIsModalOpen(false);
         setRefreshTrigger(prev => prev + 1);
     }
+
+    const handlerDelete = async () => {
+        if (!fileIdToDelete) return;
+
+        try {
+            await removeWorkTimerImported(fileIdToDelete);
+            toast.success("Planilha removida com Sucesso");
+        }
+        catch (err) {
+            toast.error("Erro ao remover Planilha importada");
+        }
+
+        setModalConfirmationOpen(false);
+        setFileIdToDelete(null);
+        setRefreshTrigger(prev => prev + 1);
+    };
+
+    const openConfirmation = (id: string) => {
+        setFileIdToDelete(id);
+        setModalConfirmationOpen(true);
+    };
 
     return (
         <div className="min-h-screen bg-gray-900 flex flex-col font-sans">
@@ -126,20 +144,21 @@ const ImportWorkTimer: React.FC = () => {
                             <table className="min-w-full divide-y divide-gray-700">
                                 <thead className="bg-gray-700/70 sticky top-0">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider w-1/2">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider w-1/2">
                                             Nome do Arquivo
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">
                                             Data de Importação
                                         </th>
-                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider hidden sm:table-cell">
+                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-200 uppercase tracking-wider hidden sm:table-cell">
                                             Ano/Mês
+                                        </th>
+                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-200 uppercase tracking-wider hidden sm:table-cell">
+                                            Ação
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-700">
-
-
                                     {paginatedFiles.length > 0 ? (
                                         paginatedFiles.map((file) => (
                                             <tr key={file.id} className="hover:bg-gray-700/50 transition-colors">
@@ -151,6 +170,13 @@ const ImportWorkTimer: React.FC = () => {
                                                 </td>
                                                 <td className="px-6 py-4 text-center text-sm text-gray-300 hidden sm:table-cell">
                                                     {file.year}/{file.month}
+                                                </td>
+                                                <td className="px-6 py-4 text-center text-red-400 hidden sm:table-cell">
+                                                    <button
+                                                        onClick={() => openConfirmation(file.id)}>
+                                                        <FaTrashAlt className="h-5 w-5 mr-2" />
+                                                    </button>
+
                                                 </td>
                                             </tr>
                                         ))
@@ -193,6 +219,14 @@ const ImportWorkTimer: React.FC = () => {
                             </div>
                         </div>
                     )}
+
+                    <ConfirmModal
+                        open={isModalConfirmationOpen}
+                        title="Tem certeza que deseja remover esta importação?"
+                        message=""
+                        onConfirm={handlerDelete}
+                        onCancel={() => setModalConfirmationOpen(false)}
+                    />
 
                 </div>
             </main>

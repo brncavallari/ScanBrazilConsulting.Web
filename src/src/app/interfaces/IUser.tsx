@@ -6,14 +6,16 @@ export interface IUser {
   remarks: IRemark[]
 }
 
-export interface IRemark{
+export interface IRemark {
   value: string;
   updateAt: Date;
-  description: string
+  description: string,
+  userName: string;
 }
 
 export interface IUserData {
-  hour: number;
+  hour: string;
   remark: string;
   email: string;
+  userName: string;
 }

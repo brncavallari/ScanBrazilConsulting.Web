@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken, getUserName } from '@services/storageService';
+import { getToken } from '@services/storageService';
 import type { IUserData } from '@interfaces/IUser';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -7,9 +7,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 export async function getUserTimerByEmailAsync() {
     const accessToken = getToken();
 
-    const userName = getUserName()
     try {
-        const response = await axios.get(`${API_URL}/api/v1/UserTimer?Email=${userName}`, {
+        const response = await axios.get(`${API_URL}/api/v1/UserTimer/byEmail`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
             },

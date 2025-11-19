@@ -7,51 +7,44 @@ import CreateUserModal from './modal/createModal';
 import { getUserTimersAsync } from '@services/userTimerService';
 import { FaChevronLeft } from "react-icons/fa6";
 import { FaChevronRight } from "react-icons/fa6";
-
-const initialUsers: IUser[] = [
-  { id: '1', name: 'Bruno Cavallari Almeida', email: 'scan.balmeida@voeazul.com.br', hour: 49 },
-  { id: '2', name: 'Felipe Ricci', email: 'scan.ricci@voeazul.com.br', hour: -10.3 },
-];
+import { FaSearch } from "react-icons/fa"; // Importando ícone de busca
 
 const fetchUsers = async (setIsLoadingTable: (loading: boolean) => void): Promise<IUser[]> => {
   try {
     setIsLoadingTable(true);
     const response = await getUserTimersAsync();
-
-    const users: IUser[] = (response || []).map((item: any) => ({
-      id: item.id,
-      fileName: item.fileName,
-      createdAt: item.createdAt,
-      year: item.year,
-      month: item.month,
-    }));
-
-    return users;
-
+    console.log();
+    return response;
   } catch (error) {
     console.error("Erro ao carregar histórico via API GET:", error);
     toast.error("Falha ao carregar importações.");
     return [];
-
   } finally {
     setIsLoadingTable(false);
   }
 };
 
-
 const CreateUserTimer: React.FC = () => {
-  const [users, setUsers] = useState<IUser[]>(initialUsers);
+  const [users, setUsers] = useState<IUser[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEditingUser, setCurrentEditingUser] = useState<IUser | null>(null);
   const [isLoadingTable, setIsLoadingTable] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [searchTerm, setSearchTerm] = useState(''); // Estado para o termo de busca
+  
   const ITEMS_PER_PAGE = 5;
 
+  // Filtra os usuários pelo nome baseado no searchTerm
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Atualiza a paginação para usar os usuários filtrados
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedFiles = users.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(users.length / ITEMS_PER_PAGE);
+  const paginatedFiles = filteredUsers.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,8 +52,13 @@ const CreateUserTimer: React.FC = () => {
       setUsers(users);
     };
 
-    //fetchData();
+    fetchData();
   }, [refreshTrigger]);
+
+  // Reseta para a página 1 quando o termo de busca muda
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -93,14 +91,14 @@ const CreateUserTimer: React.FC = () => {
     <div className="min-h-screen bg-gray-900 flex flex-col font-sans">
       <style>
         {`
-                    @keyframes slideInUp {
-                        from { transform: translateY(50px); opacity: 0; }
-                        to { transform: translateY(0); opacity: 1; }
-                    }
-                    .animate-slide-in-up {
-                        animation: slideInUp 0.3s ease-out;
-                    }
-                `}
+          @keyframes slideInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+          }
+          .animate-slide-in-up {
+            animation: slideInUp 0.3s ease-out;
+          }
+        `}
       </style>
       <Navbar />
       <Toaster position="top-center" reverseOrder={false} />
@@ -111,6 +109,30 @@ const CreateUserTimer: React.FC = () => {
           <h1 className="text-2xl font-extrabold text-blue-400 text-center mb-6 border-b border-gray-700 pb-3">
             Gerenciamento de Horas
           </h1>
+
+          {/* Campo de Busca */}
+          <div className="mb-6">
+            <div className="relative max-w-md mx-auto">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FaSearch className="text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Buscar por nome..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white transition"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          </div>
 
           <div className="overflow-x-auto rounded-lg border border-gray-700 shadow-xl">
             {isLoadingTable && !users.length ? (
@@ -123,26 +145,21 @@ const CreateUserTimer: React.FC = () => {
               <table className="min-w-full divide-y divide-gray-700">
                 <thead className="bg-gray-700/70 sticky top-0">
                   <tr>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase">
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-200 uppercase">
                       Nome
                     </th>
-
-                    <th className="text-center text-xs font-medium text-gray-300 uppercase">
+                    <th className="text-center text-xs font-medium text-gray-200 uppercase">
                       Email
                     </th>
-
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase">
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-200 uppercase">
                       Horas
                     </th>
-
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-200 uppercase">
                       Ações
                     </th>
                   </tr>
                 </thead>
-
                 <tbody className="divide-y divide-gray-700">
-
                   {paginatedFiles.length > 0 ? (
                     paginatedFiles.map((user) => (
                       <tr key={user.id} className="hover:bg-gray-700/50 transition-colors">
@@ -161,7 +178,7 @@ const CreateUserTimer: React.FC = () => {
                             className="relative px-1 py-1 rounded-full bg-blue-600 group"
                           >
                             <GoPlusCircle className="w-5 h-5 text-white" />
-                            <span className="absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-1 text-xs text-white bg-black rounded opacity-0  group-hover:opacity-100 transition pointer-events-none">
+                            <span className="absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">
                               Cadastrar Horas
                             </span>
                           </button>
@@ -171,12 +188,10 @@ const CreateUserTimer: React.FC = () => {
                   ) : (
                     <tr>
                       <td colSpan={4} className="px-6 py-6 text-center text-gray-500 text-sm">
-                        {isLoadingTable ? 'Carregando...' : 'Nenhum usuário encontrado.'}
+                        {searchTerm ? 'Nenhum usuário encontrado para sua busca.' : 'Nenhum usuário encontrado.'}
                       </td>
                     </tr>
                   )}
-
-
                 </tbody>
               </table>
             )}
@@ -185,7 +200,8 @@ const CreateUserTimer: React.FC = () => {
           {totalPages > 1 && (
             <div className="mt-4 flex justify-between items-center flex-col sm:flex-row">
               <p className="text-sm text-gray-400 mb-2 sm:mb-0">
-                Exibindo {startIndex + 1} a {Math.min(endIndex, users.length)} de {users.length} registros.
+                Exibindo {startIndex + 1} a {Math.min(endIndex, filteredUsers.length)} de {filteredUsers.length} registros.
+                {searchTerm && ` (Filtrado de ${users.length} total)`}
               </p>
               <div className="flex items-center space-x-2">
                 <button
@@ -225,11 +241,9 @@ const CreateUserTimer: React.FC = () => {
 
 function formatHourToHM(value: number) {
   const isNegative = value < 0;
-
   const absValue = Math.abs(value);
   const hours = Math.floor(absValue);
   const minutes = Math.round((absValue - hours) * 60);
-
   const formatted = `${hours}h ${minutes}m`;
   return isNegative ? `-${formatted}` : formatted;
 }
