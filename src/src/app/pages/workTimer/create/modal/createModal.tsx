@@ -5,7 +5,6 @@ import { IoSaveOutline } from "react-icons/io5";
 import toast from 'react-hot-toast';
 import type { IUserData, IUser } from '@interfaces/IUser';
 import { updateUserTimerAsync } from '@services/userTimerService';
-import { getName } from '@services/storageService';
 
 const CreateUserModal: React.FC<{
   user: IUser;
@@ -13,7 +12,7 @@ const CreateUserModal: React.FC<{
   onSuccess: () => void;
 }> = ({ user, onClose, onSuccess }) => {
 
-  const [formData, setFormData] = useState<IUserData>({ hour: "", remark: '', email: '', userName: '' });
+  const [formData, setFormData] = useState<IUserData>({ hour: "", remark: '', email: '' });
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -69,8 +68,7 @@ const CreateUserModal: React.FC<{
       const userData: IUserData = {
         hour: hoursValue.toString(),
         remark: formData.remark.trim(),
-        email: user.email,
-        userName: getName()
+        email: user.email
       }
 
       await updateUserTimerAsync(
@@ -107,7 +105,7 @@ const CreateUserModal: React.FC<{
               <input
                 id="hour"
                 name="hour"
-                type="text" // Usar 'text' para permitir o sinal de '-' na digitação inicial
+                type="text"
                 step="0.01"
                 placeholder="Insira o valor"
                 required

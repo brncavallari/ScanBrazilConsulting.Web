@@ -17,5 +17,4 @@ export interface IUserData {
   hour: string;
   remark: string;
   email: string;
-  userName: string;
 }

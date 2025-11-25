@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Navbar from "@components/navbar/navbar";
 import type { ClonableIconCardProps, HoursBalance } from "@interfaces/IWorkTimer";
 import { getUserTimerByEmailAsync } from "@services/userTimerService";
 import RemarksTable from "./remarkTable/remarkTable";
-
-
+import TimeOffModal from "./modal/timeOffModal";
+import { Toaster } from "react-hot-toast";
 
 const WorkTimer: React.FC = () => {
   const [hoursBalance, setHoursBalance] = useState<HoursBalance>({
     hour: 0,
     remark: [],
   });
+  const [hasEnoughHours, setHasEnoughHours] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserTimer = async () => {
@@ -18,21 +20,25 @@ const WorkTimer: React.FC = () => {
         const response = await getUserTimerByEmailAsync();
 
         if (response && typeof response.hour === "number") {
+          const hoursInMinutes = response.hour * 60;
           setHoursBalance({
-            hour: response.hour * 60,
+            hour: hoursInMinutes,
             remark: response.remarks == null ? [] : response.remarks,
           });
+          setHasEnoughHours(hoursInMinutes > 0); // 8 horas em minutos
         } else {
           setHoursBalance({
             hour: 0,
             remark: [],
           });
+          setHasEnoughHours(false);
         }
       } catch (err) {
         setHoursBalance({
           hour: 0,
           remark: [],
         });
+        setHasEnoughHours(false);
         console.error("Erro ao buscar dados do timer:", err);
       }
     };
@@ -40,9 +46,22 @@ const WorkTimer: React.FC = () => {
     fetchUserTimer();
   }, []);
 
+  const handleOpenModal = useCallback(() => {
+    setIsModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
+
+  const handleModalSuccessAndClose = () => {
+    setIsModalOpen(false);
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col font-sans bg-gradient-to-br from-gray-700 via-gray-900 to-black">
       <Navbar />
+      <Toaster position="top-center" reverseOrder={false} />
 
       <main className="flex flex-1 justify-center p-6 sm:p-10">
         <div className="absolute inset-0 overflow-hidden">
@@ -57,8 +76,39 @@ const WorkTimer: React.FC = () => {
             color="text-blue-400"
           />
 
+          <div className="w-full">
+            <button
+              onClick={() => handleOpenModal()}
+              disabled={!hasEnoughHours}
+              className={`
+              w-full text-white py-4 rounded-lg font-semibold 
+              transition duration-200 flex items-center justify-center 
+              gap-3 text-lg shadow-lg
+              ${!hasEnoughHours
+                  ? 'bg-gray-600 cursor-not-allowed opacity-70 relative z-10'
+                  : 'bg-blue-600 hover:bg-blue-900 cursor-pointer relative z-10'
+                }
+            `}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Solicitar Folga
+            </button>
+          </div>
+
           <RemarksTable remarks={hoursBalance.remark} />
         </div>
+
+
+        {isModalOpen && (
+          <TimeOffModal
+            userHour={hoursBalance.hour}
+            onClose={handleCloseModal}
+            onSuccess={handleModalSuccessAndClose}
+          />
+        )}
+
       </main>
     </div>
   );

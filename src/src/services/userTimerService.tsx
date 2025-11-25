@@ -47,7 +47,6 @@ export async function getUserTimersAsync() {
 }
 
 export async function updateUserTimerAsync(user: IUserData) {
-    debugger;
     const accessToken = getToken();
 
     try {

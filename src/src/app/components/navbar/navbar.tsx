@@ -7,8 +7,6 @@ import { BsClockHistory } from "react-icons/bs";
 import { IoCreateOutline } from "react-icons/io5";
 import { CiImport } from "react-icons/ci";
 import { useAuth } from '../../auth/useAuth';
-import { GiShoppingCart } from "react-icons/gi";
-import { GoPencil } from "react-icons/go";
 
 const NavLinks = [
     { name: 'Home', path: '/home', icon: HiOutlineHome },
@@ -109,7 +107,7 @@ const Navbar: React.FC = () => {
                             </div>
 
                             {/* Menu Despesas */}
-                            <div className="relative">
+                            {/* <div className="relative">
                                 {isAdmin ? (
                                     <div
                                         onClick={() => navigate('/expenses')}
@@ -148,7 +146,7 @@ const Navbar: React.FC = () => {
                                         </Link>
                                     </div>
                                 )}
-                            </div>
+                            </div> */}
                         </div>
                     </div>
 
