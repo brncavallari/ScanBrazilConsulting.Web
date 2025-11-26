@@ -11,6 +11,7 @@ const WorkTimer: React.FC = () => {
     hour: 0,
     remark: [],
   });
+  
   const [hasEnoughHours, setHasEnoughHours] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 

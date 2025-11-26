@@ -9,6 +9,8 @@ import WorkTimer from '@pages/workTimer';
 import CreateUserTimer from '@pages/workTimer/create';
 import ImportWorkTimer from '@pages/workTimer/import';
 import Expenses from '@pages/expenses';
+import ApproveTimeOff from '@pages/workTimer/approve';
+import TimeOffDetail from '@pages/workTimer/approve/detail';
 
 const App: React.FC = () => {
     return (
@@ -31,6 +33,19 @@ const App: React.FC = () => {
                             <ImportWorkTimer />
                         </RoleGuard>
                     } />
+
+                    <Route path="/worktimer/approve" element={
+                        <RoleGuard adminOnly>
+                            <ApproveTimeOff />
+                        </RoleGuard>
+                    } />
+
+                    <Route path="/worktimer/approve/detail/:protocol" element={
+                        <RoleGuard adminOnly>
+                            <TimeOffDetail />
+                        </RoleGuard>
+                    } />
+
                 </Route>
                 <Route path="*" element={<div className="min-h-screen bg-gray-900 text-white p-8">404: Página não encontrada</div>} />
             </Routes>

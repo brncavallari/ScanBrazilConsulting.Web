@@ -7,6 +7,7 @@ import { BsClockHistory } from "react-icons/bs";
 import { IoCreateOutline } from "react-icons/io5";
 import { CiImport } from "react-icons/ci";
 import { useAuth } from '../../auth/useAuth';
+import { AiOutlineSignature } from "react-icons/ai";
 
 const NavLinks = [
     { name: 'Home', path: '/home', icon: HiOutlineHome },
@@ -15,7 +16,7 @@ const NavLinks = [
 const Navbar: React.FC = () => {
     const [openMenu, setOpenMenu] = useState<string | null>(null);
     const navigate = useNavigate();
-    const { isAdmin, isUser } = useAuth();
+    const { isAdmin } = useAuth();
 
     const name = getName();
 
@@ -102,6 +103,14 @@ const Navbar: React.FC = () => {
                                             <CiImport className="h-5 w-5 mr-1" />
                                             Importar
                                         </Link>
+                                        <Link
+                                            to="/worktimer/approve"
+                                            className="flex items-center gap-2 px-4 py-2 text-base text-white hover:bg-gray-600 rounded-md"
+                                            onClick={() => setOpenMenu(null)}
+                                        >
+                                            <AiOutlineSignature className="h-5 w-5 mr-1" />
+                                            Aprovações
+                                        </Link>                                        
                                     </div>
                                 )}
                             </div>

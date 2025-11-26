@@ -34,7 +34,6 @@ const CreateUserTimer: React.FC = () => {
 
   const ITEMS_PER_PAGE = 5;
 
-  // Filtra os usuários pelo nome baseado no searchTerm
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -120,7 +119,6 @@ const CreateUserTimer: React.FC = () => {
             Gerenciamento de Horas
           </h1>
 
-          {/* Campo de Busca */}
           <div className="mb-6">
             <div className="relative max-w-md mx-auto">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

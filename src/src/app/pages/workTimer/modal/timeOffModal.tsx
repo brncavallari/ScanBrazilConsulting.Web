@@ -3,7 +3,10 @@ import { IoMdClose } from "react-icons/io";
 import { BsClockHistory } from "react-icons/bs";
 import { IoSaveOutline } from "react-icons/io5";
 import toast from 'react-hot-toast';
-import DatePickerField from '@components/datePicker/DatePickerField';
+import DatePickerField from '@components/datePicker/datePickerField';
+import { getUserName } from '@services/storageService';
+import type { ITimeOffData } from '@interfaces/ITimeOff';
+import { createTimeOffAsync } from '@services/timeOffService';
 
 const TimeOffModal: React.FC<{
   userHour: number;
@@ -13,61 +16,78 @@ const TimeOffModal: React.FC<{
   const [openPicker, setOpenPicker] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    hours: "",
+    hour: "",
     startDate: undefined as Date | undefined,
     endDate: undefined as Date | undefined,
+    remark: ""
   });
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
 
-    if (value === "") {
-      setFormData(prev => ({ ...prev, hours: "" }));
-      return;
+    if (name === "hour") {
+      if (value === "") {
+        setFormData(prev => ({ ...prev, hour: "" }));
+        return;
+      }
+
+      const normalizedValue = value.replace(",", ".");
+      const regex = /^\d+(\.\d*)?$/;
+
+      if (!regex.test(normalizedValue)) return;
+
+      setFormData(prev => ({ ...prev, hour: value }));
+    } else if (name === "remark") {
+      setFormData(prev => ({ ...prev, remark: value }));
     }
-
-    value = value.replace(",", ".");
-
-    const regex = /^\d+(\.\d*)?$/;
-
-    if (!regex.test(value)) return;
-
-    setFormData(prev => ({ ...prev, hours: value }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    if (!formData.hours || !formData.startDate || !formData.endDate) {
+    if (!formData.hour || !formData.startDate || !formData.endDate || !formData.remark.trim()) {
       toast.error("Preencha todos os campos.");
+      setIsLoading(false);
       return;
     }
 
     if (formData.endDate < formData.startDate) {
       toast.error("A data final não pode ser antes da inicial.");
+      setIsLoading(false);
       return;
     }
 
-    const requestedMinutes = Number(formData.hours) * 60;
+    const requestedMinutes = Number(formData.hour) * 60;
 
     if (requestedMinutes == 0) {
       toast.error("A quantidade de hora deve ser maior que Zero.");
+      setIsLoading(false);
       return;
     }
 
     if (requestedMinutes > userHour) {
       toast.error(`A quantidade de horas solicitadas não pode ser maior que ${formatTime(userHour)}.`);
+      setIsLoading(false);
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      await new Promise(resolve => setTimeout(resolve, 1200));
+      const timeOffData: ITimeOffData = {
+        hour: parseFloat(formData.hour).toString(),
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        userEmail: getUserName(),
+        remark: formData.remark.trim()
+      }
 
-      toast.success("Horas de folga solicitadas com sucesso!");
+      await createTimeOffAsync(
+        timeOffData
+      );
+
+      toast.success("Horas solicitadas com sucesso!");
       onSuccess();
       onClose();
     }
@@ -106,9 +126,10 @@ const TimeOffModal: React.FC<{
 
             <div className="relative">
               <input
+                name="hour"
                 type="text"
                 placeholder="Ex: 8.0"
-                value={formData.hours}
+                value={formData.hour}
                 onChange={handleChange}
                 disabled={isLoading}
                 className="block w-full pl-3 pr-10 py-3 border border-gray-700 bg-gray-700 text-white rounded-lg 
@@ -137,7 +158,6 @@ const TimeOffModal: React.FC<{
               openPicker={openPicker}
               setOpenPicker={setOpenPicker}
             />
-
           </div>
 
           <div>
@@ -154,21 +174,44 @@ const TimeOffModal: React.FC<{
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-semibold text-gray-400 mb-2">
+              Motivo da Solicitação
+            </label>
+
+            <textarea
+              name="remark"
+              rows={4}
+              placeholder="Descreva o motivo da sua solicitação de folga..."
+              value={formData.remark}
+              onChange={handleChange}
+              disabled={isLoading}
+              className="block w-full px-3 py-3 border border-gray-700 bg-gray-700 text-white rounded-lg 
+                         focus:ring-blue-500 focus:border-blue-500 text-base placeholder-gray-500 resize-none"
+            />
+
+            <p className="mt-1 text-xs text-gray-500">
+              Esta descrição será enviada para o administrador.
+            </p>
+          </div>
+
           <button
             type="submit"
             className={`w-full flex justify-center items-center px-6 py-3 text-lg font-bold rounded-xl shadow-md transition duration-200 ease-in-out transform
               ${isLoading ||
-                !formData.hours ||
+                !formData.hour ||
                 !formData.startDate ||
-                !formData.endDate
+                !formData.endDate ||
+                !formData.remark.trim() // Adiciona a validação do motivo
                 ? 'bg-blue-600/50 text-white/70 cursor-not-allowed'
                 : 'bg-blue-600 text-white hover:bg-blue-800 hover:shadow-lg hover:scale-[1.01] cursor-pointer'
               }`}
             disabled={
               isLoading ||
-              !formData.hours ||
+              !formData.hour ||
               !formData.startDate ||
-              !formData.endDate
+              !formData.endDate ||
+              !formData.remark.trim() // Adiciona a validação do motivo
             }
           >
             {isLoading ? (

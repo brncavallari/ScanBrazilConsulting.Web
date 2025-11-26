@@ -97,7 +97,6 @@ const ImportWorkTimer: React.FC = () => {
     };
 
     const openConfirmation = (id: string) => {
-        console.log(id)
         setFileIdToDelete(id);
         setModalConfirmationOpen(true);
     };
