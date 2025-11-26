@@ -1,0 +1,54 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Node
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+
+# Local environment
+.local/
+.env
+.env*.local
+
+# Editor
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing
+coverage/
+
+# Package manager files
+package-lock.json
+yarn.lock
+.pnpm-debug.log*
+
+# Misc
+*.pem
+
+# Vercel / Deployment
+.vercel/
+
+# Optional — if using Yarn PnP
+.pnp.*

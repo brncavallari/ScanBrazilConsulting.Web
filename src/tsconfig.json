@@ -1,0 +1,31 @@
+{
+  "files": [],
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@services/*": [
+        "services/*"
+      ],
+      "@configs/*": [
+        "app/configs/*"
+      ],
+      "@pages/*": [
+        "app/pages/*"
+      ],
+      "@components/*": [
+        "app/components/*"
+      ],
+      "@interfaces/*": [
+        "app/interfaces/*"
+      ]
+    }
+  },
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+}
