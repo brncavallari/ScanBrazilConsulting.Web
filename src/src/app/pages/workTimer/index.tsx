@@ -5,8 +5,10 @@ import { getUserTimerByEmailAsync } from "@services/userTimerService";
 import RemarksTable from "./remarkTable/remarkTable";
 import TimeOffModal from "./modal/timeOffModal";
 import { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const WorkTimer: React.FC = () => {
+  const navigate = useNavigate();
   const [hoursBalance, setHoursBalance] = useState<HoursBalance>({
     hour: 0,
     remark: [],
@@ -57,6 +59,7 @@ const WorkTimer: React.FC = () => {
 
   const handleModalSuccessAndClose = () => {
     setIsModalOpen(false);
+    navigate('/worktimer/history');
   }
 
   return (

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { GoPlusCircle } from "react-icons/go";
+import { GoPencil, GoPlusCircle } from "react-icons/go";
 import Navbar from '@components/navbar/navbar';
 import type { IUser } from '@interfaces/IUser';
 import CreateUserModal from './modal/createModal';
@@ -8,6 +8,7 @@ import { getUserTimersAsync } from '@services/userTimerService';
 import { FaChevronLeft } from "react-icons/fa6";
 import { FaChevronRight } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
+import EditUserModal from './modal/editModal';
 
 const fetchUsers = async (setIsLoadingTable: (loading: boolean) => void): Promise<IUser[]> => {
   try {
@@ -26,6 +27,7 @@ const fetchUsers = async (setIsLoadingTable: (loading: boolean) => void): Promis
 const CreateUserTimer: React.FC = () => {
   const [users, setUsers] = useState<IUser[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [currentEditingUser, setCurrentEditingUser] = useState<IUser | null>(null);
   const [isLoadingTable, setIsLoadingTable] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -81,6 +83,11 @@ const CreateUserTimer: React.FC = () => {
     setIsModalOpen(true);
   }, []);
 
+  const handleOpenModalEdit = useCallback((user: IUser) => {
+    setCurrentEditingUser(user);
+    setIsModalEditOpen(true);
+  }, []);
+
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
     setCurrentEditingUser(null);
@@ -88,6 +95,7 @@ const CreateUserTimer: React.FC = () => {
 
   const handleModalSuccessAndClose = () => {
     setIsModalOpen(false);
+    setCurrentEditingUser(null);
     setRefreshTrigger(prev => prev + 1);
   }
 
@@ -113,7 +121,7 @@ const CreateUserTimer: React.FC = () => {
       <Toaster position="top-center" reverseOrder={false} />
 
       <main className="flex flex-1 justify-center items-start pt-12 p-4 lg:p-6">
-        <div className="w-full max-w-6xl bg-gray-800 shadow-2xl rounded-2xl p-6 md:p-8 text-white border border-gray-700">
+        <div className="w-full max-w-8xl bg-gray-800 shadow-2xl rounded-2xl p-6 md:p-8 text-white border border-gray-700">
 
           <h1 className="text-2xl font-extrabold text-blue-400 text-center mb-6 border-b border-gray-700 pb-3">
             Gerenciamento de Horas
@@ -159,6 +167,9 @@ const CreateUserTimer: React.FC = () => {
                     <th className="text-center text-xs font-medium text-gray-200 uppercase">
                       Email
                     </th>
+                    <th className="text-center text-xs font-medium text-gray-200 uppercase">
+                      Email Alternativo
+                    </th>
                     <th className="px-4 py-3 text-center text-xs font-medium text-gray-200 uppercase">
                       Horas
                     </th>
@@ -177,19 +188,34 @@ const CreateUserTimer: React.FC = () => {
                         <td className="px-2 py-4 text-center font-small text-white max-w-sm truncate">
                           {user.email}
                         </td>
+                        <td className="px-2 py-4 text-center font-small text-white max-w-sm truncate">
+                          {user.email}
+                        </td>
                         <td className={getHoursColor(user.hour)}>
                           {formatHourToHM(user.hour)}
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-center">
-                          <button
-                            onClick={() => handleOpenModal(user)}
-                            className="relative px-1 py-1 rounded-full bg-blue-600 group"
-                          >
-                            <GoPlusCircle className="w-5 h-5 text-white" />
-                            <span className="absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">
-                              Cadastrar Horas
-                            </span>
-                          </button>
+                          <div className="flex justify-center items-center gap-2">
+                            <button
+                              onClick={() => handleOpenModal(user)}
+                              className="relative px-1 py-1 rounded-full bg-blue-600 group"
+                            >
+                              <GoPlusCircle className="w-5 h-5 text-white" />
+                              <span className="absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">
+                                Adicionar Horas
+                              </span>
+                            </button>
+
+                            <button
+                              onClick={() => handleOpenModalEdit(user)}
+                              className="relative px-1 py-1 rounded-full bg-blue-600 group"
+                            >
+                              <GoPencil className="w-5 h-5 text-white" />
+                              <span className="absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">
+                                Editar
+                              </span>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -240,6 +266,14 @@ const CreateUserTimer: React.FC = () => {
 
       {isModalOpen && currentEditingUser && (
         <CreateUserModal
+          user={currentEditingUser}
+          onClose={handleCloseModal}
+          onSuccess={handleModalSuccessAndClose}
+        />
+      )}
+
+      {isModalEditOpen && currentEditingUser && (
+        <EditUserModal
           user={currentEditingUser}
           onClose={handleCloseModal}
           onSuccess={handleModalSuccessAndClose}

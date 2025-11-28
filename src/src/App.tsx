@@ -11,6 +11,7 @@ import ImportWorkTimer from '@pages/workTimer/import';
 import Expenses from '@pages/expenses';
 import ApproveTimeOff from '@pages/workTimer/approve';
 import TimeOffDetail from '@pages/workTimer/approve/detail';
+import HistoryTimeOff from '@pages/workTimer/history';
 
 const App: React.FC = () => {
     return (
@@ -21,6 +22,7 @@ const App: React.FC = () => {
                     <Route path="/home" element={<Home />} />
                     <Route path="/worktimer" element={<WorkTimer />} />
                     <Route path="/expenses" element={<Expenses />} />
+                    <Route path="/worktimer/history" element={<HistoryTimeOff />} />
 
                     <Route path="/worktimer/register" element={
                         <RoleGuard adminOnly>

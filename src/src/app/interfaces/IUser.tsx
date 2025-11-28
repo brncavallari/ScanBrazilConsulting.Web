@@ -2,6 +2,7 @@ export interface IUser {
   id: string;
   name: string;
   email: string;
+  emailAlternative: string;
   hour: number;
   remarks: IRemark[]
 }
@@ -17,4 +18,5 @@ export interface IUserData {
   hour: string;
   remark: string;
   email: string;
+  emailAlternative: string;
 }

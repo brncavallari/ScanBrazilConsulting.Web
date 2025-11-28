@@ -18,3 +18,10 @@ export interface ITimeOff {
   approver: string;
   description: string;
 }
+
+
+export interface TimeOffDetailModalProps {
+  timeOff: ITimeOff | null;
+  isOpen: boolean;
+  onClose: () => void;
+}
