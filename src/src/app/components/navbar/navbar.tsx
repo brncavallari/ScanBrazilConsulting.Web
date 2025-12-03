@@ -5,6 +5,7 @@ import { getName } from '@services/storageService';
 import { logout } from '@services/authService';
 import { BsClockHistory } from "react-icons/bs";
 import { IoCreateOutline } from "react-icons/io5";
+import { FaRegUser } from "react-icons/fa";
 import { CiImport } from "react-icons/ci";
 import { useAuth } from '../../auth/useAuth';
 import { AiOutlineSignature } from "react-icons/ai";
@@ -89,14 +90,6 @@ const Navbar: React.FC = () => {
                                         {isAdmin && (
                                             <>
                                                 <Link
-                                                    to="/worktimer/register"
-                                                    className="flex items-center gap-2 px-4 py-2 text-base text-white hover:bg-gray-600 rounded-md"
-                                                    onClick={() => setOpenMenu(null)}
-                                                >
-                                                    <IoCreateOutline className="h-5 w-5 mr-1" />
-                                                    Cadastro
-                                                </Link>
-                                                <Link
                                                     to="/worktimer/import"
                                                     className="flex items-center gap-2 px-4 py-2 text-base text-white hover:bg-gray-600 rounded-md"
                                                     onClick={() => setOpenMenu(null)}
@@ -115,6 +108,21 @@ const Navbar: React.FC = () => {
                                             </>
                                         )}
                                     </div>
+                                )}
+                            </div>
+
+                            {/* Usuarios */}
+                            <div className='relative'>
+                                {isAdmin ? (
+                                    <div
+                                        onClick={() => navigate('/users')}
+                                        className="flex items-center space-x-1 px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer"
+                                    >
+                                        <FaRegUser className="h-4 w-5 mr-1" />
+                                        <span>Usuarios</span>
+                                    </div>
+                                ) : (
+                                    <></>
                                 )}
                             </div>
 

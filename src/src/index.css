@@ -12,6 +12,29 @@ body {
   background-color: #111827;
 }
 
+
+
+.range_start {
+  background-color: #3b82f6 !important;
+  color: white !important;
+  font-weight: bold !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.range_end {
+  background-color: #3b82f6 !important;
+  color: white !important;
+  font-weight: bold !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.range_middle {
+  background-color: rgba(59, 130, 246, 0.3) !important;
+  border-radius: 0 !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

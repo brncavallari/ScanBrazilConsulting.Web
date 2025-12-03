@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import Navbar from '@components/navbar/navbar';
 import type { ITimeOff } from '@interfaces/ITimeOff';
 import { approveTimeOffAsync, getTimeOffByProtocolAsync, rejectTimeOffAsync } from '@services/timeOffService';
 import ConfirmModal from '@components/modalConfirmation/confirmModal';
 import { HiOutlineArrowLeft } from 'react-icons/hi';
+import { ToasterComponent } from '@components/toast/toasterComponent';
 
 const TimeOffDetail: React.FC = () => {
   const navigate = useNavigate();
@@ -104,7 +105,7 @@ const TimeOffDetail: React.FC = () => {
       </div>
 
       <Navbar />
-      <Toaster position="top-center" reverseOrder={false} />
+      <ToasterComponent />
 
       <main className="flex flex-1 justify-center items-start pt-12 p-4 lg:p-6">
         <div className="w-full max-w-4xl bg-gray-800 shadow-2xl rounded-2xl p-6 md:p-8 text-white border border-gray-700">

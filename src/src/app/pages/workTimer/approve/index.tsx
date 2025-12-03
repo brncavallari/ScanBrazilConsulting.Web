@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { GoEye } from "react-icons/go";
 import Navbar from '@components/navbar/navbar';
 import { FaChevronLeft } from "react-icons/fa6";
@@ -8,6 +8,9 @@ import { FaSearch } from "react-icons/fa";
 import type { ITimeOff } from '@interfaces/ITimeOff';
 import { getTimeOffsAsync } from '@services/timeOffService';
 import { useNavigate } from 'react-router-dom';
+import DetailedLoader from '@components/loader/detailedLoader';
+import { ToasterComponent } from '@components/toast/toasterComponent';
+import { formatDate, formatDateCreateHhmm, formatHourToHM } from '../../../functions/index';
 
 const fetchTimeOff = async (setIsLoadingTable: (loading: boolean) => void): Promise<ITimeOff[]> => {
   try {
@@ -32,10 +35,8 @@ const ApproveTimeOff: React.FC = () => {
   const [refreshTrigger] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-
   const ITEMS_PER_PAGE = 5;
 
-  // Filtra por search term E status
   const filteredTimeOff = timeOff.filter(timeOff => {
     const matchesSearch =
       timeOff.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -79,7 +80,6 @@ const ApproveTimeOff: React.FC = () => {
     }
   }, [totalPages]);
 
-  // Contadores para estatísticas
   const pendingCount = timeOff.filter(item => item.status === 2).length;
   const approvedCount = timeOff.filter(item => item.status === 3).length;
   const rejectedCount = timeOff.filter(item => item.status === 4).length;
@@ -104,7 +104,7 @@ const ApproveTimeOff: React.FC = () => {
         `}
       </style>
       <Navbar />
-      <Toaster position="top-center" reverseOrder={false} />
+      <ToasterComponent />
 
       <main className="flex flex-1 justify-center items-start pt-12 p-4 lg:p-6">
         <div className="w-full max-w-screen-2xl bg-gray-800 shadow-2xl rounded-2xl p-6 md:p-8 text-white border border-gray-700">
@@ -112,7 +112,6 @@ const ApproveTimeOff: React.FC = () => {
           <h1 className="text-3xl font-extrabold text-blue-400 text-center mb-8 border-b border-gray-700 pb-4">
             Aprovações de Horas
           </h1>
-
 
           <div className="mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
@@ -206,7 +205,6 @@ const ApproveTimeOff: React.FC = () => {
             </button>
           </div>
 
-          {/* Tabela */}
           <div className="overflow-x-auto rounded-lg border border-gray-700 shadow-xl bg-gray-800">
             {isLoadingTable && !timeOff.length ? (
               <div className="flex justify-center items-center h-64">
@@ -282,7 +280,7 @@ const ApproveTimeOff: React.FC = () => {
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-200">
-                            {formatDateCreateAt(timeOff.createdAt)}
+                            {formatDateCreateHhmm(timeOff.createdAt)}
                           </div>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
@@ -337,7 +335,6 @@ const ApproveTimeOff: React.FC = () => {
             )}
           </div>
 
-          {/* Paginação */}
           {totalPages > 1 && (
             <div className="mt-6 flex justify-between items-center flex-col sm:flex-row gap-4">
               <p className="text-sm text-gray-400">
@@ -372,34 +369,7 @@ const ApproveTimeOff: React.FC = () => {
   );
 };
 
-// ... (as funções auxiliares permanecem as mesmas)
-function formatHourToHM(value: number) {
-  const isNegative = value < 0;
-  const absValue = Math.abs(value);
-  const hours = Math.floor(absValue);
-  const minutes = Math.round((absValue - hours) * 60);
-  const formatted = `${hours}h ${minutes}m`;
-  return isNegative ? `-${formatted}` : formatted;
-}
 
-const formatDate = (timestamp: number): string => {
-  return new Date(timestamp).toLocaleDateString('pt-BR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-};
-
-const formatDateCreateAt = (timestamp: number): string => {
-  const date = new Date(timestamp);
-  const datePart = date.toLocaleDateString('pt-BR');
-  const timePart = date.toLocaleTimeString('pt-BR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  });
-  return `${datePart} ${timePart}`;
-};
 
 const getStatusText = (status: number): string => {
   switch (status) {
@@ -409,12 +379,5 @@ const getStatusText = (status: number): string => {
     default: return 'Pendente';
   }
 };
-
-const DetailedLoader: React.FC<{ sizeClass: string }> = ({ sizeClass }) => (
-  <svg className={`animate-spin ${sizeClass}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-  </svg>
-);
 
 export default ApproveTimeOff;

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { GoEye } from "react-icons/go";
 import { FaTrash } from "react-icons/fa";
 import Navbar from '@components/navbar/navbar';
@@ -10,6 +10,9 @@ import type { ITimeOff } from '@interfaces/ITimeOff';
 import { getTimeOffsByEmailAsync, deleteTimeOffByProtocolAsync } from '@services/timeOffService';
 import HistoryTimeOffModal from './modal';
 import ConfirmModal from '@components/modalConfirmation/confirmModal';
+import DetailedLoader from '@components/loader/detailedLoader';
+import { ToasterComponent } from '@components/toast/toasterComponent';
+import { formatDate, formatDateCreateHhmm, formatHourToHM } from '../../../functions/index';
 
 const fetchTimeOff = async (setIsLoadingTable: (loading: boolean) => void): Promise<ITimeOff[]> => {
   try {
@@ -38,9 +41,8 @@ const HistoryTimeOff: React.FC = () => {
   const [isModalConfirmationOpen, setModalConfirmationOpen] = useState(false);
   const [protocol, setProtocol] = useState('');
   const [isActionLoading, setIsActionLoading] = useState(false);
-  
-
   const ITEMS_PER_PAGE = 5;
+
 
   const filteredTimeOff = timeOff.filter(timeOff => {
     const matchesSearch =
@@ -85,7 +87,7 @@ const HistoryTimeOff: React.FC = () => {
     }
   }, [totalPages]);
 
-  const handleConfirmation = async (protocol: string) => {
+  const handleDeleteConfirmation = async (protocol: string) => {
     setModalConfirmationOpen(true);
     setProtocol(protocol);
   }
@@ -154,7 +156,7 @@ const HistoryTimeOff: React.FC = () => {
         `}
       </style>
       <Navbar />
-      <Toaster position="top-center" reverseOrder={false} />
+      <ToasterComponent />
 
       <main className="flex flex-1 justify-center items-start pt-12 p-4 lg:p-6">
         <div className="w-full max-w-screen-2xl bg-gray-800 shadow-2xl rounded-2xl p-6 md:p-8 text-white border border-gray-700">
@@ -330,7 +332,7 @@ const HistoryTimeOff: React.FC = () => {
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-200">
-                            {formatDateCreateAt(timeOff.createdAt)}
+                            {formatDateCreateHhmm(timeOff.createdAt)}
                           </div>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
@@ -354,7 +356,7 @@ const HistoryTimeOff: React.FC = () => {
 
                             {timeOff.status === 2 && (
                               <button
-                                onClick={() => handleConfirmation(timeOff.protocol)}
+                                onClick={() => handleDeleteConfirmation(timeOff.protocol)}
                                 className="inline-flex items-center p-3 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed group relative"
                                 title='Remover solicitação'
                               >
@@ -446,33 +448,6 @@ const HistoryTimeOff: React.FC = () => {
   );
 };
 
-function formatHourToHM(value: number) {
-  const isNegative = value < 0;
-  const absValue = Math.abs(value);
-  const hours = Math.floor(absValue);
-  const minutes = Math.round((absValue - hours) * 60);
-  const formatted = `${hours}h ${minutes}m`;
-  return isNegative ? `-${formatted}` : formatted;
-}
-
-const formatDate = (timestamp: number): string => {
-  return new Date(timestamp).toLocaleDateString('pt-BR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-};
-
-const formatDateCreateAt = (timestamp: number): string => {
-  const date = new Date(timestamp);
-  const datePart = date.toLocaleDateString('pt-BR');
-  const timePart = date.toLocaleTimeString('pt-BR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  });
-  return `${datePart} ${timePart}`;
-};
 
 const getStatusText = (status: number): string => {
   switch (status) {
@@ -483,11 +458,5 @@ const getStatusText = (status: number): string => {
   }
 };
 
-const DetailedLoader: React.FC<{ sizeClass: string }> = ({ sizeClass }) => (
-  <svg className={`animate-spin ${sizeClass}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-  </svg>
-);
 
 export default HistoryTimeOff;

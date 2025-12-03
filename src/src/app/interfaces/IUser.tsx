@@ -15,6 +15,8 @@ export interface IRemark {
 }
 
 export interface IUserData {
+  id: string;
+  name: string;
   hour: string;
   remark: string;
   email: string;

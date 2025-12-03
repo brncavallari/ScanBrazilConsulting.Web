@@ -1,4 +1,3 @@
-// App.tsx atualizado
 import React from 'react';
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import Login from '../src/app/pages/login/login';
@@ -6,7 +5,7 @@ import Home from '../src/app/pages/home/home';
 import ProtectedRoute from '../src/app/components/route/protectedRoute';
 import { RoleGuard } from '../src/app/auth/roleGuard';
 import WorkTimer from '@pages/workTimer';
-import CreateUserTimer from '@pages/workTimer/create';
+import UserTimer from '@pages/users';
 import ImportWorkTimer from '@pages/workTimer/import';
 import Expenses from '@pages/expenses';
 import ApproveTimeOff from '@pages/workTimer/approve';
@@ -24,9 +23,9 @@ const App: React.FC = () => {
                     <Route path="/expenses" element={<Expenses />} />
                     <Route path="/worktimer/history" element={<HistoryTimeOff />} />
 
-                    <Route path="/worktimer/register" element={
+                    <Route path="/users" element={
                         <RoleGuard adminOnly>
-                            <CreateUserTimer />
+                            <UserTimer />
                         </RoleGuard>
                     } />
 

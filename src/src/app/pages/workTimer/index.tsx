@@ -3,9 +3,10 @@ import Navbar from "@components/navbar/navbar";
 import type { ClonableIconCardProps, HoursBalance } from "@interfaces/IWorkTimer";
 import { getUserTimerByEmailAsync } from "@services/userTimerService";
 import RemarksTable from "./remarkTable/remarkTable";
-import TimeOffModal from "./modal/timeOffModal";
-import { Toaster } from "react-hot-toast";
+import TimeOffModal from "./timeOff/timeOffModal";
 import { useNavigate } from "react-router-dom";
+import { ToasterComponent } from "@components/toast/toasterComponent";
+import { formatTime } from "../../functions/index";
 
 const WorkTimer: React.FC = () => {
   const navigate = useNavigate();
@@ -65,8 +66,8 @@ const WorkTimer: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col font-sans bg-gradient-to-br from-gray-700 via-gray-900 to-black">
       <Navbar />
-      <Toaster position="top-center" reverseOrder={false} />
-
+      <ToasterComponent />
+      
       <main className="flex flex-1 justify-center p-6 sm:p-10">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-400/10 rounded-full blur-3xl"></div>
@@ -133,7 +134,7 @@ const MainBalanceCard: React.FC<ClonableIconCardProps> = ({
       )} transition hover:bg-gray-500/50 w-full`}
     >
       <div className="flex justify-center items-center mb-4">
-        <h3 className="text-2xl font-extrabold text-blue-400 text-center mb-6 border-b border-gray-500 pb-3">
+        <h3 className="text-3xl font-extrabold text-blue-400 text-center mb-6 border-b border-gray-500 pb-3">
           {title}
         </h3>
       </div>
@@ -146,13 +147,6 @@ const MainBalanceCard: React.FC<ClonableIconCardProps> = ({
   );
 };
 
-function formatTime(value: number): string {
-  const isNegative = value < 0;
-  const absValue = Math.abs(value);
-  const hours = Math.floor(absValue / 60);
-  const minutes = absValue % 60;
-  const formatted = `${hours}h ${minutes}m`;
-  return isNegative ? `-${formatted}` : formatted;
-}
+
 
 export default WorkTimer;

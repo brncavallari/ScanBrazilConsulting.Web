@@ -7,13 +7,14 @@ import DatePickerField from '@components/datePicker/datePickerField';
 import { getUserName } from '@services/storageService';
 import type { ITimeOffData } from '@interfaces/ITimeOff';
 import { createTimeOffAsync } from '@services/timeOffService';
+import { formatTime } from '../../../functions/index';
+
 
 const TimeOffModal: React.FC<{
   userHour: number;
   onClose: () => void;
   onSuccess: () => void;
 }> = ({ userHour, onClose, onSuccess }) => {
-  const [openPicker, setOpenPicker] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     hour: "",
@@ -21,6 +22,14 @@ const TimeOffModal: React.FC<{
     endDate: undefined as Date | undefined,
     remark: ""
   });
+
+  const handleDateRangeSelect = (range: { start: Date | undefined; end: Date | undefined }) => {
+    setFormData(prev => ({
+      ...prev,
+      startDate: range.start,
+      endDate: range.end
+    }));
+  };
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -148,29 +157,13 @@ const TimeOffModal: React.FC<{
 
           <div>
             <label className="block text-sm font-semibold text-gray-400 mb-2">
-              Data de início
+              Datas da Folga
             </label>
 
             <DatePickerField
-              name="start"
-              selected={formData.startDate}
-              onSelect={date => setFormData(prev => ({ ...prev, startDate: date }))}
-              openPicker={openPicker}
-              setOpenPicker={setOpenPicker}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-400 mb-2">
-              Data de fim
-            </label>
-
-            <DatePickerField
-              name="end"
-              selected={formData.endDate}
-              onSelect={date => setFormData(prev => ({ ...prev, endDate: date }))}
-              openPicker={openPicker}
-              setOpenPicker={setOpenPicker}
+              start={formData.startDate}
+              end={formData.endDate}
+              onChange={handleDateRangeSelect}
             />
           </div>
 
@@ -202,7 +195,7 @@ const TimeOffModal: React.FC<{
                 !formData.hour ||
                 !formData.startDate ||
                 !formData.endDate ||
-                !formData.remark.trim() // Adiciona a validação do motivo
+                !formData.remark.trim()
                 ? 'bg-blue-600/50 text-white/70 cursor-not-allowed'
                 : 'bg-blue-600 text-white hover:bg-blue-800 hover:shadow-lg hover:scale-[1.01] cursor-pointer'
               }`}
@@ -211,7 +204,7 @@ const TimeOffModal: React.FC<{
               !formData.hour ||
               !formData.startDate ||
               !formData.endDate ||
-              !formData.remark.trim() // Adiciona a validação do motivo
+              !formData.remark.trim()
             }
           >
             {isLoading ? (
@@ -233,15 +226,6 @@ const TimeOffModal: React.FC<{
       </div>
     </div>
   );
-
-  function formatTime(value: number): string {
-    const isNegative = value < 0;
-    const absValue = Math.abs(value);
-    const hours = Math.floor(absValue / 60);
-    const minutes = absValue % 60;
-    const formatted = `${hours}h ${minutes}m`;
-    return isNegative ? `-${formatted}` : formatted;
-  }
 };
 
 export default TimeOffModal;

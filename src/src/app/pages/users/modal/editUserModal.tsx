@@ -6,13 +6,13 @@ import toast from 'react-hot-toast';
 import type { IUserData, IUser } from '@interfaces/IUser';
 import { updateUserTimerAsync } from '@services/userTimerService';
 
-const CreateUserModal: React.FC<{
+const EditeHourModal: React.FC<{
   user: IUser;
   onClose: () => void;
   onSuccess: () => void;
 }> = ({ user, onClose, onSuccess }) => {
 
-  const [formData, setFormData] = useState<IUserData>({ hour: "", remark: '', email: '' });
+  const [formData, setFormData] = useState<IUserData>({ hour: "", remark: '', email: '', emailAlternative: '', id: '', name: ''});
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -40,51 +40,56 @@ const CreateUserModal: React.FC<{
   };
 
   const handleSubmit = async (e: FormEvent) => {
-    try {
-      e.preventDefault();
-      let hoursValue: number;
-      setIsLoading(true);
+  e.preventDefault();
+  
+  // Validações ANTES do try/catch
+  let hoursValue: number;
 
-      if (typeof formData.hour === 'string') {
-        hoursValue = parseFloat(formData.hour);
-        if (isNaN(hoursValue)) {
-          toast.error("Por favor, insira um valor numérico válido para as horas.");
-          setIsLoading(false);
-        }
-      } else {
-        hoursValue = formData.hour;
-      }
-
-      if (hoursValue === 0) {
-        toast.error("A hora inserida não pode ser 0.");
-        setIsLoading(false);
-      }
-
-      if (!formData.remark.trim()) {
-        toast.error("Uma descrição é obrigatória para registrar as horas.");
-        setIsLoading(false);
-      }
-
-      const userData: IUserData = {
-        hour: hoursValue.toString(),
-        remark: formData.remark.trim(),
-        email: user.email
-      }
-
-      await updateUserTimerAsync(
-        userData
-      );
-
-      toast.success("Horas cadastradas com Sucesso.");
+  if (typeof formData.hour === 'string') {
+    hoursValue = parseFloat(formData.hour);
+    if (isNaN(hoursValue)) {
+      toast.error("Por favor, insira um valor numérico válido para as horas.");
+      return;
     }
-    catch (err) {
-      console.log(err);
-    }
-    finally {
-      setIsLoading(false);
-      onSuccess()
-    }
-  };
+  } else {
+    hoursValue = formData.hour;
+  }
+
+  if (hoursValue === 0) {
+    toast.error("A hora inserida não pode ser 0.");
+    return;
+  }
+
+  if (!formData.remark.trim()) {
+    toast.error("Uma descrição é obrigatória para registrar as horas.");
+    return;
+  }
+
+  try {
+    setIsLoading(true);
+
+    const userData: IUserData = {
+      id: user.id,
+      hour: hoursValue.toString(),
+      remark: formData.remark.trim(),
+      email: user.email,
+      emailAlternative: user.emailAlternative,
+      name: user.name
+    };
+
+    await updateUserTimerAsync(userData);
+    toast.success("Horas cadastradas com Sucesso.");
+    
+    // Chama onSuccess APENAS se a operação foi bem-sucedida
+    onSuccess();
+
+  } catch (err) {
+    console.log(err);
+    toast.error("Erro ao cadastrar horas. Tente novamente.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 transition-opacity duration-300">
@@ -171,4 +176,4 @@ const CreateUserModal: React.FC<{
   );
 };
 
-export default CreateUserModal;
+export default EditeHourModal;

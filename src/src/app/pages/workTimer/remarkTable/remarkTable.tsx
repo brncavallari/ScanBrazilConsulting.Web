@@ -1,4 +1,5 @@
 import type { RemarksTableProps } from "@interfaces/IWorkTimer";
+import { formatDateAll } from "../../../functions/index";
 import { Tooltip } from 'react-tooltip';
 
 const RemarksTable: React.FC<RemarksTableProps> = ({ remarks }) => {
@@ -46,7 +47,7 @@ const RemarksTable: React.FC<RemarksTableProps> = ({ remarks }) => {
                 {remark.value}
               </td>
               <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-400">
-                {formatDate(remark.updateAt.toString())}
+                {formatDateAll(remark.updateAt.toString())}
               </td>
               <td className="px-6 py-4 text-center whitespace-nowrap text-sm font-medium text-blue-300 hidden sm:table-cell">
                 {remark.userName}
@@ -71,25 +72,5 @@ const RemarksTable: React.FC<RemarksTableProps> = ({ remarks }) => {
     </div>
   );
 };
-
-function formatDate(dateString?: string): string {
-  if (!dateString || dateString == '0001-01-01T00:00:00') return "—";
-  try {
-    const date = new Date(dateString);
-
-    if (isNaN(date.getTime())) {
-      return "Data Inválida";
-    }
-    return date.toLocaleString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return "—";
-  }
-}
 
 export default RemarksTable;

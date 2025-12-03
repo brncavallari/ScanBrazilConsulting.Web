@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { HiOutlineArrowLeft, HiOutlinePlus } from 'react-icons/hi';
 import Navbar from '@components/navbar/navbar';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import type { ReceiptFile } from '@interfaces/IReceiptFile';
 import { getUserName } from '@services/storageService';
 import type { Expense } from '@interfaces/IExpenses'
 import MultipleFileUploader from '@components/fileUploader/multipleFileUploader';
+import { ToasterComponent } from '@components/toast/toasterComponent';
 
 const expenseOptions = [
     { value: 'fuel', label: 'Combustível' },
@@ -198,8 +199,8 @@ const Expenses: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-900 bg-gradient-to-br from-gray-700 via-gray-900 to-black">
-            <Toaster position="top-center" reverseOrder={false} />
             <Navbar />
+            <ToasterComponent />
 
             <main className="mx-auto max-w-7xl py-8 sm:px-6 lg:px-8">
                 <ProgressBar currentStep={currentStep} />
