@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import Navbar from '@components/navbar/navbar';
 import type { ITimeOff } from '@interfaces/ITimeOff';
 import { approveTimeOffAsync, getTimeOffByProtocolAsync, rejectTimeOffAsync } from '@services/timeOffService';
 import ConfirmModal from '@components/modalConfirmation/confirmModal';
 import { HiOutlineArrowLeft } from 'react-icons/hi';
+import { ToasterComponent } from '@components/toast/toasterComponent';
 
 const TimeOffDetail: React.FC = () => {
-  const { protocol } = useParams<{ protocol: string }>();
   const navigate = useNavigate();
+  const { protocol } = useParams<{ protocol: string }>();
   const [timeOff, setTimeOff] = useState<ITimeOff>();
   const [isLoading, setIsLoading] = useState(true);
-  const [isActionLoading, setIsActionLoading] = useState(false); // ← NOVO ESTADO para a ação
+  const [isActionLoading, setIsActionLoading] = useState(false);
   const [description, setDescription] = useState('');
   const [isModalConfirmationOpen, setModalConfirmationOpen] = useState(false);
   const [isApprove, setApprove] = useState(false);
@@ -44,10 +45,10 @@ const TimeOffDetail: React.FC = () => {
 
   const handleApproveReject = async () => {
     try {
-      setIsActionLoading(true); // ← Usa o NOVO ESTADO
+      setIsActionLoading(true);
 
       if (isApprove) {
-        await approveTimeOffAsync(protocol!, description);
+        await approveTimeOffAsync(protocol!, description, timeOff!.userEmail);
         toast.success('Solicitação aprovada com sucesso!');
       }
       else {
@@ -60,7 +61,7 @@ const TimeOffDetail: React.FC = () => {
       toast.error('Falha ao aprovar solicitação.');
     }
     finally {
-      setIsActionLoading(false); // ← Usa o NOVO ESTADO
+      setIsActionLoading(false);
       setModalConfirmationOpen(false);
       navigate('/worktimer/approve');
     }
@@ -72,10 +73,10 @@ const TimeOffDetail: React.FC = () => {
   };
 
   const handleCancel = () => {
-    if (!isActionLoading) { // ← Verifica o NOVO ESTADO
+    if (!isActionLoading) { 
       setModalConfirmationOpen(false);
     }
-  };  
+  };
 
   if (isLoading) {
     return (
@@ -104,7 +105,7 @@ const TimeOffDetail: React.FC = () => {
       </div>
 
       <Navbar />
-      <Toaster position="top-center" reverseOrder={false} />
+      <ToasterComponent />
 
       <main className="flex flex-1 justify-center items-start pt-12 p-4 lg:p-6">
         <div className="w-full max-w-4xl bg-gray-800 shadow-2xl rounded-2xl p-6 md:p-8 text-white border border-gray-700">
@@ -114,7 +115,7 @@ const TimeOffDetail: React.FC = () => {
               <h1 className="text-3xl font-extrabold text-blue-400">
                 Detalhes da Solicitação
               </h1>
-              <p className="text-gray-400 mt-2 relative z-10">Protocolo: {protocol}</p>
+              <p className="text-gray-400 mt-2 relative">Protocolo: {protocol}</p>
             </div>
 
             <div className="flex flex-col items-start sm:items-end gap-2">
@@ -213,7 +214,6 @@ const TimeOffDetail: React.FC = () => {
             </div>
           </div>
 
-          {/* Observação */}
           <div className="mb-6 relative z-10">
             <div className="bg-gray-700/40 border border-gray-600 rounded-lg p-4">
               <label className="block text-sm font-semibold text-gray-400 mb-2">
@@ -239,6 +239,7 @@ const TimeOffDetail: React.FC = () => {
               <HiOutlineArrowLeft className="h-4 w-4" />
               Voltar
             </button>
+
             <button
               onClick={() => openConfirmation(false)}
               className={`

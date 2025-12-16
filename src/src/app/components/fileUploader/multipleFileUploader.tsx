@@ -4,6 +4,7 @@ import type { ReceiptFile } from '@interfaces/IReceiptFile';
 import { HiOutlineUpload, HiOutlineTrash } from 'react-icons/hi';
 import { PiMicrosoftExcelLogoDuotone } from "react-icons/pi";
 import { FaFilePdf, FaFileImage, FaFileCsv, FaFileAlt } from "react-icons/fa";
+import { fileToBase64 } from '../../functions/index';
 
 const MultipleFileUploader: React.FC<{
     files: ReceiptFile[];
@@ -172,11 +173,3 @@ const MultipleFileUploader: React.FC<{
 
 export default MultipleFileUploader;
 
-function fileToBase64(file: File): string | PromiseLike<string> {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = error => reject(error);
-    });
-}

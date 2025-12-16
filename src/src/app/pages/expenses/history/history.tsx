@@ -48,13 +48,8 @@ const History: React.FC = () => {
   const handleConfirmCancel = () => {
     if (protocolToCancel) {
       console.log(`CANCELAMENTO CONFIRMADO para o protocolo: ${protocolToCancel}`);
-      // Aqui você chamaria sua API para cancelar
 
-      // Exemplo: Atualizar a lista de mock, se necessário
-      // setMockRegisters(prev => prev.map(...));
-
-      handleCloseModal(); // Fecha o modal
-      // Opcional: toast.success('Cadastro cancelado com sucesso!');
+      handleCloseModal();
     }
   };
 

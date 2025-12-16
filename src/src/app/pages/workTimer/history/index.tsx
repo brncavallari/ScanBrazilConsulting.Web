@@ -1,13 +1,15 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { GoEye } from "react-icons/go";
+import { FaTrash } from "react-icons/fa";
 import Navbar from '@components/navbar/navbar';
 import { FaChevronLeft } from "react-icons/fa6";
 import { FaChevronRight } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import type { ITimeOff } from '@interfaces/ITimeOff';
-import { getTimeOffsAsync } from '@services/timeOffService';
-import { useNavigate } from 'react-router-dom';
+import { getTimeOffsByEmailAsync, deleteTimeOffByProtocolAsync } from '@services/timeOffService';
+import HistoryTimeOffModal from './modal';
+import ConfirmModal from '@components/modalConfirmation/confirmModal';
 import DetailedLoader from '@components/loader/detailedLoader';
 import { ToasterComponent } from '@components/toast/toasterComponent';
 import { formatDate, formatDateCreateHhmm, formatHourToHM } from '../../../functions/index';
@@ -15,7 +17,7 @@ import { formatDate, formatDateCreateHhmm, formatHourToHM } from '../../../funct
 const fetchTimeOff = async (setIsLoadingTable: (loading: boolean) => void): Promise<ITimeOff[]> => {
   try {
     setIsLoadingTable(true);
-    const response = await getTimeOffsAsync();
+    const response = await getTimeOffsByEmailAsync();
     return response;
 
   } catch (error) {
@@ -27,15 +29,20 @@ const fetchTimeOff = async (setIsLoadingTable: (loading: boolean) => void): Prom
   }
 };
 
-const ApproveTimeOff: React.FC = () => {
-  const navigate = useNavigate();
+const HistoryTimeOff: React.FC = () => {
   const [timeOff, setTimeOff] = useState<ITimeOff[]>([]);
   const [isLoadingTable, setIsLoadingTable] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [refreshTrigger] = useState(0);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedTimeOff, setSelectedTimeOff] = useState<ITimeOff | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalConfirmationOpen, setModalConfirmationOpen] = useState(false);
+  const [protocol, setProtocol] = useState('');
+  const [isActionLoading, setIsActionLoading] = useState(false);
   const ITEMS_PER_PAGE = 5;
+
 
   const filteredTimeOff = timeOff.filter(timeOff => {
     const matchesSearch =
@@ -80,6 +87,51 @@ const ApproveTimeOff: React.FC = () => {
     }
   }, [totalPages]);
 
+  const handleDeleteConfirmation = async (protocol: string) => {
+    setModalConfirmationOpen(true);
+    setProtocol(protocol);
+  }
+
+  const handleDelete = async () => {
+    
+    try {
+      setIsActionLoading(true);
+
+      await deleteTimeOffByProtocolAsync(
+        protocol
+      );
+
+      toast.success('Solicitação removida com sucesso!');
+      setRefreshTrigger(prev => prev + 1);
+      
+    } catch (error) {
+      console.error('Erro ao remover solicitação:', error);
+      toast.error('Erro ao remover solicitação.');
+    } finally {
+      setModalConfirmationOpen(false);
+      setIsActionLoading(false);
+      setProtocol('');
+    }
+  };
+
+   const handleCancel = () => {
+    if (!isActionLoading) { 
+      setModalConfirmationOpen(false);
+      setProtocol('');
+    }
+  };
+
+  const handleViewDetails = (timeOff: ITimeOff) => {
+    setSelectedTimeOff(timeOff);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedTimeOff(null);
+    setProtocol('');
+  };
+
   const pendingCount = timeOff.filter(item => item.status === 2).length;
   const approvedCount = timeOff.filter(item => item.status === 3).length;
   const rejectedCount = timeOff.filter(item => item.status === 4).length;
@@ -110,7 +162,7 @@ const ApproveTimeOff: React.FC = () => {
         <div className="w-full max-w-screen-2xl bg-gray-800 shadow-2xl rounded-2xl p-6 md:p-8 text-white border border-gray-700">
 
           <h1 className="text-3xl font-extrabold text-blue-400 text-center mb-8 border-b border-gray-700 pb-4">
-            Aprovações de Horas
+            Histórico de Solicitações
           </h1>
 
           <div className="mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
@@ -155,7 +207,6 @@ const ApproveTimeOff: React.FC = () => {
                   </div>
                 </div>
               </div>
-
             </div>
 
             <div className="text-sm text-gray-400 bg-gray-700/50 px-4 py-2 rounded-lg whitespace-nowrap">
@@ -205,6 +256,7 @@ const ApproveTimeOff: React.FC = () => {
             </button>
           </div>
 
+          {/* Tabela */}
           <div className="overflow-x-auto rounded-lg border border-gray-700 shadow-xl bg-gray-800">
             {isLoadingTable && !timeOff.length ? (
               <div className="flex justify-center items-center h-64">
@@ -253,23 +305,23 @@ const ApproveTimeOff: React.FC = () => {
                           </div>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-200">
+                          <div className="text-sm text-gray-200 max-w-[200px] truncate" title={timeOff.userEmail}>
                             {timeOff.userEmail}
                           </div>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-200">
                             <div>{formatDate(timeOff.startDate)}</div>
-                            <div className="text-xs text-gray-400">até {formatDate(timeOff.endDate)}</div>
+                            <div className="text-sm text-gray-400">até {formatDate(timeOff.endDate)}</div>
                           </div>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-center">
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-500/20 text-blue-300">
+                          <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-500/20 text-blue-300">
                             {formatHourToHM(timeOff.hour)}
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-center">
-                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${timeOff.status === 3
+                          <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${timeOff.status === 3
                             ? 'bg-green-500/20 text-green-300'
                             : timeOff.status === 4
                               ? 'bg-red-500/20 text-red-300'
@@ -284,7 +336,7 @@ const ApproveTimeOff: React.FC = () => {
                           </div>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-200">
+                          <div className="text-sm text-gray-200 max-w-[150px] truncate" title={timeOff.approver || ''}>
                             {timeOff.approver ? (
                               <span className="text-green-400">{timeOff.approver}</span>
                             ) : (
@@ -293,24 +345,36 @@ const ApproveTimeOff: React.FC = () => {
                           </div>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-center">
-                          <button
-                            onClick={() => navigate(`/worktimer/approve/detail/${timeOff.protocol}`)}
-                            className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 group"
-                          >
-                            <GoEye className="w-4 h-4 mr-2" />
-                            Visualizar
-                          </button>
+                          <div className="flex justify-center space-x-3">
+                            <button
+                              onClick={() => handleViewDetails(timeOff)}
+                              className="inline-flex items-center px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 group"
+                            >
+                              <GoEye className="w-5 h-5 mr-2" />
+                              Visualizar
+                            </button>
+
+                            {timeOff.status === 2 && (
+                              <button
+                                onClick={() => handleDeleteConfirmation(timeOff.protocol)}
+                                className="inline-flex items-center p-3 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed group relative"
+                                title='Remover solicitação'
+                              >
+                                <FaTrash className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={8} className="px-6 py-12 text-center">
+                      <td colSpan={8} className="px-6 py-16 text-center">
                         <div className="flex flex-col items-center justify-center text-gray-500">
-                          <div className="text-4xl mb-2">
+                          <div className="text-5xl mb-4">
                             {statusFilter !== 'all' ? '🔍' : '📋'}
                           </div>
-                          <div className="text-lg font-medium mb-1">
+                          <div className="text-xl font-medium mb-2">
                             {searchTerm
                               ? 'Nenhuma solicitação encontrada'
                               : statusFilter !== 'all'
@@ -365,10 +429,24 @@ const ApproveTimeOff: React.FC = () => {
 
         </div>
       </main>
+
+      <HistoryTimeOffModal
+        timeOff={selectedTimeOff}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      />
+
+      <ConfirmModal
+        open={isModalConfirmationOpen}
+        onConfirm={handleDelete}
+        message={`Deseja remover esta solicitação?`}
+        subMessage={`Protocolo: ${protocol}`}
+        onCancel={handleCancel}
+        isLoading={isActionLoading}
+      />
     </div>
   );
 };
-
 
 
 const getStatusText = (status: number): string => {
@@ -380,4 +458,5 @@ const getStatusText = (status: number): string => {
   }
 };
 
-export default ApproveTimeOff;
+
+export default HistoryTimeOff;

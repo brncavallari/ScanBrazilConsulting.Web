@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { HiOutlineLogout, HiOutlineHome, HiChevronDown } from 'react-icons/hi';
+import { HiOutlineLogout, HiOutlineHome, HiChevronDown, HiOutlineClock } from 'react-icons/hi';
 import { Link, useNavigate } from 'react-router-dom';
 import { getName } from '@services/storageService';
 import { logout } from '@services/authService';
 import { BsClockHistory } from "react-icons/bs";
 import { IoCreateOutline } from "react-icons/io5";
+import { FaRegUser } from "react-icons/fa";
 import { CiImport } from "react-icons/ci";
 import { useAuth } from '../../auth/useAuth';
 import { AiOutlineSignature } from "react-icons/ai";
+import { GoPencil } from 'react-icons/go';
+import { GiShoppingCart } from "react-icons/gi";
 
 const NavLinks = [
     { name: 'Home', path: '/home', icon: HiOutlineHome },
@@ -57,61 +60,69 @@ const Navbar: React.FC = () => {
                             ))}
 
                             <div className="relative">
+                                <div
+                                    onClick={() => navigate('/worktimer')}
+                                    className="flex items-center space-x-1 px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer"
+                                >
+                                    <BsClockHistory className="h-4 w-5 mr-1" />
+                                    <span>Horas</span>
+                                    <HiChevronDown
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setOpenMenu(openMenu === 'Horas' ? null : 'Horas');
+                                        }}
+                                        className={`h-5 w-5 transition-transform duration-200 ${openMenu === 'Horas' ? 'rotate-180' : ''
+                                            }`}
+                                    />
+                                </div>
 
-                                {/* Menu Horas */}
-                                {isAdmin ? (
-                                    <div
-                                        onClick={() => navigate('/worktimer')}
-                                        className="flex items-center space-x-1 px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer"
-                                    >
-                                        <BsClockHistory className="h-4 w-5 mr-1" />
-                                        <span>Horas</span>
-                                        <HiChevronDown
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setOpenMenu(openMenu === 'Horas' ? null : 'Horas');
-                                            }}
-                                            className={`h-5 w-5 transition-transform duration-200 ${openMenu === 'Horas' ? 'rotate-180' : ''
-                                                }`}
-                                        />
-                                    </div>
-                                ) : (
-                                    <div
-                                        onClick={() => navigate('/worktimer')}
-                                        className="flex items-center space-x-1 px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer"
-                                    >
-                                        <BsClockHistory className="h-4 w-5 mr-1" />
-                                        <span>Horas</span>
-                                    </div>
-                                )}
-
-                                {isAdmin && openMenu === 'Horas' && (
+                                {openMenu === 'Horas' && (
                                     <div className="absolute left-0 mt-3 w-40 bg-gray-700 rounded-md shadow-lg z-50">
                                         <Link
-                                            to="/worktimer/register"
+                                            to="/worktimer/history"
                                             className="flex items-center gap-2 px-4 py-2 text-base text-white hover:bg-gray-600 rounded-md"
                                             onClick={() => setOpenMenu(null)}
                                         >
-                                            <IoCreateOutline className="h-5 w-5 mr-1" />
-                                            Cadastro
+                                            <HiOutlineClock className="h-5 w-5 mr-1" />
+                                            Histórico
                                         </Link>
-                                        <Link
-                                            to="/worktimer/import"
-                                            className="flex items-center gap-2 px-4 py-2 text-base text-white hover:bg-gray-600 rounded-md"
-                                            onClick={() => setOpenMenu(null)}
-                                        >
-                                            <CiImport className="h-5 w-5 mr-1" />
-                                            Importar
-                                        </Link>
-                                        <Link
-                                            to="/worktimer/approve"
-                                            className="flex items-center gap-2 px-4 py-2 text-base text-white hover:bg-gray-600 rounded-md"
-                                            onClick={() => setOpenMenu(null)}
-                                        >
-                                            <AiOutlineSignature className="h-5 w-5 mr-1" />
-                                            Aprovações
-                                        </Link>                                        
+
+                                        {isAdmin && (
+                                            <>
+                                                <Link
+                                                    to="/worktimer/import"
+                                                    className="flex items-center gap-2 px-4 py-2 text-base text-white hover:bg-gray-600 rounded-md"
+                                                    onClick={() => setOpenMenu(null)}
+                                                >
+                                                    <CiImport className="h-5 w-5 mr-1" />
+                                                    Importar
+                                                </Link>
+                                                <Link
+                                                    to="/worktimer/approve"
+                                                    className="flex items-center gap-2 px-4 py-2 text-base text-white hover:bg-gray-600 rounded-md"
+                                                    onClick={() => setOpenMenu(null)}
+                                                >
+                                                    <AiOutlineSignature className="h-5 w-5 mr-1" />
+                                                    Aprovações
+                                                </Link>
+                                            </>
+                                        )}
                                     </div>
+                                )}
+                            </div>
+
+                            {/* Usuarios */}
+                            <div className='relative'>
+                                {isAdmin ? (
+                                    <div
+                                        onClick={() => navigate('/users')}
+                                        className="flex items-center space-x-1 px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer"
+                                    >
+                                        <FaRegUser className="h-4 w-5 mr-1" />
+                                        <span>Usuarios</span>
+                                    </div>
+                                ) : (
+                                    <></>
                                 )}
                             </div>
 

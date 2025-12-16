@@ -3,6 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import type { ReceiptFile } from '@interfaces/IReceiptFile';
 import { HiOutlineUpload, HiOutlineTrash } from 'react-icons/hi';
 import { PiMicrosoftExcelLogoDuotone } from "react-icons/pi";
+import { fileToBase64 } from '../../functions/index';
 
 const FileUploader: React.FC<{
     files: ReceiptFile[];
@@ -90,13 +91,3 @@ const FileUploader: React.FC<{
 };
 
 export default FileUploader;
-
-function fileToBase64(file: File): string | PromiseLike<string> {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = error => reject(error);
-    });
-}
-
