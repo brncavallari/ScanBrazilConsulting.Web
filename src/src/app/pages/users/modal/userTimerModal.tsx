@@ -12,6 +12,7 @@ const UserTimerModal: React.FC<{
   onSuccess: () => void;
 }> = ({ user, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
+    id: '',
     name: '',
     email: '',
     emailAlternative: '',
@@ -23,6 +24,7 @@ const UserTimerModal: React.FC<{
   useEffect(() => {
     if (user) {
       setFormData({
+        id: user.id || '',
         name: user.name || '',
         email: user.email || '',
         emailAlternative: user.emailAlternative || '',
@@ -115,7 +117,9 @@ const UserTimerModal: React.FC<{
     <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 transition-opacity duration-300">
       <div className="bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg border border-gray-700 transform transition-all duration-300 scale-100 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center p-5 border-b border-gray-700 sticky top-0 bg-gray-800 z-10">
-          <h3 className="text-xl font-bold text-blue-400">Editar Usuário</h3>
+          <h3 className="text-xl font-bold text-blue-400">
+            {formData?.id ? "Editar Usuário" : "Cadastrar Usuário"}
+          </h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white transition p-1 rounded-full hover:bg-gray-700"

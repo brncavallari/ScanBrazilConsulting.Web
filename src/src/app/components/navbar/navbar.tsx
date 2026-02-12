@@ -4,13 +4,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getName } from '@services/storageService';
 import { logout } from '@services/authService';
 import { BsClockHistory } from "react-icons/bs";
-import { IoCreateOutline } from "react-icons/io5";
 import { FaRegUser } from "react-icons/fa";
 import { CiImport } from "react-icons/ci";
 import { useAuth } from '../../auth/useAuth';
 import { AiOutlineSignature } from "react-icons/ai";
-import { GoPencil } from 'react-icons/go';
-import { GiShoppingCart } from "react-icons/gi";
 
 const NavLinks = [
     { name: 'Home', path: '/home', icon: HiOutlineHome },
